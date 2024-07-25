@@ -172,15 +172,18 @@ const RadiologyBooking = () => {
       setOpen(false);
     }
   };
-
+const selectParty = (e)=>{
+  setServiceDetails([])
+  setParty(e)
+}
   return (
     <div>
       <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
         <CenterHeading title={"Radiology Booking"} />
         <div className="flex items-center flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 md:justify-center mt-2">
-          <MRModel title={"Create Mr No"} />
+          <MRModel title={"Create Mr No"} onClick={(e) => setmrInfo(e)}/>
           <BasicModal title={"Select Mr No"} onClick={(e) => setmrInfo(e)} />
-          <PartyModal title={"Select Party"} onClick={(e) => setParty(e)} />
+          <PartyModal title={"Select Party"} onClick={(e) => selectParty(e)} />
           <ConsultantModal
             title={"Select Consultant"}
             onClick={(e) => setConsultant(e)}
