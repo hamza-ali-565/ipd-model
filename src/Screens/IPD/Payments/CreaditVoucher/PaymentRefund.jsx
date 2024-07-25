@@ -122,7 +122,6 @@ const PaymentRefund = () => {
             paymentAgainst === "Agaisnt Radiology" ? "Radiology No" : "Bill No"
           } !!`
         );
-      submitRefund();
       if (uniqueId.length > 0) {
         RadiologyRefund();
         return;
