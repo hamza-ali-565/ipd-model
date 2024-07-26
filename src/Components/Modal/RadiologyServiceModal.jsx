@@ -226,6 +226,7 @@ export default function RadiologyServiceModal({
                             placeholder="Qty"
                             value={items?.quantity}
                             name=""
+                            disabled={true}
                             id=""
                             onChange={(e) => updateSD(e.target.value, items)}
                           />
