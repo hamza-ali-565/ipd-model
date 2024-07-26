@@ -14,6 +14,7 @@ const ServiceName = () => {
   const [parent, setParent] = useState("");
   const [name, setName] = useState("");
   const [serviceData, setServiceData] = useState([]);
+  const [specificItem, setSpecificItem] = useState(null);
 
   const url = useSelector((item) => item.url);
   const userData = useSelector((item) => item?.response);
@@ -28,6 +29,7 @@ const ServiceName = () => {
     setParentData([]);
     getParents();
     setServiceData([]);
+    setSpecificItem(null);
   };
 
   const getParents = async () => {
@@ -76,9 +78,39 @@ const ServiceName = () => {
         withCredentials: true,
       });
       setServiceData(response.data.data);
+
       setOpen(false);
     } catch (error) {
       console.log("Error of getservices", error);
+      setOpen(false);
+    }
+  };
+
+  const changeName = (e) => {
+    const newName = e.target.value.toUpperCase();
+    if (specificItem) {
+      setSpecificItem({ ...specificItem, serviceName: newName });
+    } else {
+      setName(newName);
+    }
+  };
+  const updateHandler = async () => {
+    try {
+      setOpen(true);
+      const response = await axios.put(
+        `${url}/updateservicename`,
+        {
+          serviceName: specificItem?.serviceName,
+          serviceId: specificItem?._id,
+        },
+        { withCredentials: true }
+      );
+      SuccessAlert({ text: "SERVICE UPDATED SUCCESSFULLY !!!", timer: 500 });
+      setOpen(false);
+      setSpecificItem(null);
+      getServices(parent);
+    } catch (error) {
+      console.log("Error of update handler", updateHandler);
       setOpen(false);
     }
   };
@@ -96,31 +128,44 @@ const ServiceName = () => {
           <LabeledInput
             label={"Service Name"}
             placeholder={"Enter Service Name"}
-            value={name}
-            onChange={(e) => setName(e.target.value.toUpperCase())}
+            value={(specificItem && specificItem?.serviceName) || name}
+            onChange={(e) => changeName(e)}
           />
           <div className="flex justify-center space-x-2">
-            <ButtonDis title={"Save"} onClick={submitHandler} />
+            <ButtonDis
+              title={(specificItem && "Update") || "Save"}
+              onClick={specificItem === null ? submitHandler : updateHandler}
+            />
             <ButtonDis title={"Refresh"} onClick={resetData} />
           </div>
         </div>
       </div>
       <div className="container mx-auto mt-3">
-        <div className="mt-3 grid grid-cols-4 text-xs justify-items-center items-center h-16 border border-gray-300">
+        <div className="mt-3 grid grid-cols-5 text-xs justify-items-center items-center h-16 border border-gray-300">
           <p>Service Name</p>
           <p>Parent Name</p>
           <p>Created User</p>
           <p>Created Date</p>
+          <p>Update</p>
         </div>
       </div>
       {serviceData.length > 0 &&
         serviceData?.map((items, index) => (
           <div className="container mx-auto mt-3" key={index}>
-            <div className="mt-3 grid grid-cols-4 text-xs justify-items-center items-center h-10 border border-gray-300">
+            <div className="mt-3 grid grid-cols-5 text-xs justify-items-center items-center h-10 border border-gray-300">
               <p>{items?.serviceName}</p>
               <p>{items?.parentName}</p>
               <p>{items?.createdUser}</p>
-              <p>{items?.updatedOn}</p>
+              <p>
+                {(items?.updatedOn && items?.updatedOn) ||
+                  (items?.createdOn && items?.createdOn)}
+              </p>
+              <p
+                className="text-red-500 font-bold hover:text-red-800 cursor-pointer underline"
+                onClick={(e) => setSpecificItem(items)}
+              >
+                UPDATE
+              </p>
             </div>
           </div>
         ))}
