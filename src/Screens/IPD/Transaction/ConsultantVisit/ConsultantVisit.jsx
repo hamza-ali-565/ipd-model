@@ -16,6 +16,7 @@ const ConsultantVisit = () => {
   const [visiDetails, setVisistDetails] = useState([]);
   const [date, setDate] = useState("");
   const [remarks, setRemarks] = useState("");
+  const [manualCharges, setManualCharges] = useState(0)
   const [visitData, setVisitData] = useState([]);
   const [open, setOpen] = useState(false);
 
@@ -58,7 +59,7 @@ const ConsultantVisit = () => {
           visitDate: date,
           remarks,
           createdUser: userId[0]?.userId,
-          charges: visiDetails[0]?.charges,
+          charges: (visiDetails && visiDetails[0]?.charges) || manualCharges,
         },
 
         { withCredentials: true }
@@ -129,12 +130,14 @@ const ConsultantVisit = () => {
     setDate("");
     setRemarks("");
     setVisitData([]);
+    setManualCharges(0)
   };
   const refreshData2 = () => {
     setConsultant(null);
     setVisistDetails([]);
     setDate("");
     setRemarks("");
+    setManualCharges(0)
   };
 
   return (
@@ -177,8 +180,10 @@ const ConsultantVisit = () => {
             label={"Charges"}
             placeholder={"Consultant Charges"}
             type={"Number"}
-            value={visiDetails.length > 0 ? visiDetails[0].charges : ""}
-            onChange={(e) => updateCharges(e.target.value)}
+            value={visiDetails.length > 0 ? visiDetails[0].charges : manualCharges}
+            onChange={(e) => (updateCharges(e.target.value) || setManualCharges(e.target.value))}
+            
+
           />
           <LabeledInput
             label={"Visit Date"}
