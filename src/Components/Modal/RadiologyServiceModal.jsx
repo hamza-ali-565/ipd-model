@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import CenterHeading from "../Center Heading/CenterHeading";
 import ButtonDis from "../Button/ButtonDis";
 import { ErrorAlert, SuccessAlert } from "../Alert/Alert";
+import AdmissionModal from "./AdmissionModal";
 
 const style = {
   position: "absolute",
@@ -34,6 +35,7 @@ export default function RadiologyServiceModal({
   const [toggle, setToggle] = useState(false);
   const [serviceDetails, setServiceDetails] = useState([]);
   const inputRef = useRef(null); // Reference for the input element
+
 
   React.useEffect(() => {
     getData();
@@ -154,16 +156,12 @@ export default function RadiologyServiceModal({
       >
         <Box sx={style}>
           <div className="flex justify-around mb-3">
+           
             <p>
-              <span className="font-bold ">PatientName:</span> {patientName}
-            </p>
-            <p>
-              <span className="font-bold ">AdmissionNo:</span>{" "}
+              <span className="font-bold ">Party Name:</span>{" "}
               {modalAdmissionNo}
             </p>
-            <p>
-              <span className="font-bold ">Party:</span> Cash
-            </p>
+            
           </div>
           <div className="flex justify-center">
             <SimpleInput
@@ -172,6 +170,10 @@ export default function RadiologyServiceModal({
               onChange={(e) => filterNames(e.target.value)}
             />
           </div>
+          {
+           !modalAdmissionNo &&
+            <div className="flex justify-center text-red-600 mt-2 font-bold">ERROR !!!<span className="px-1 text-blue-600 font-bold">PLEASE SELECT PARTY NAME FIRST </span>!!! ERROR</div>
+          }
           {/* main */}
           <div className="grid grid-cols-2 gap-x-2">
             {/* service names */}

@@ -36,6 +36,7 @@ export default function IPDRadioModal({
   const [toggle, setToggle] = useState(false);
   const [serviceDetails, setServiceDetails] = useState([]);
   const [consultant, setConsultant] = useState(null);
+  const [message, setMessage] = useState('')
   const inputRef = useRef(null); // Reference for the input element
 
   React.useEffect(() => {
@@ -46,6 +47,7 @@ export default function IPDRadioModal({
     setData([]);
     setServiceDetails([]);
     setConsultant(null);
+    setMessage('')
   };
 
   const url = useSelector((state) => state.url);
@@ -74,9 +76,10 @@ export default function IPDRadioModal({
 
   const SendData = (item) => {
     if (consultant === null) {
-      console.log("please select Consultant !!!");
+      setMessage("PLEASE SELECT CONSULTANT NAME FIRST !!!")
       return;
     }
+    setMessage('')
     for (const existingItem of serviceDetails) {
       if (existingItem?.serviceId === item?.serviceId) {
         console.log("Item already exists");
@@ -172,7 +175,7 @@ export default function IPDRadioModal({
               {modalAdmissionNo}
             </p>
             <p>
-              <span className="font-bold ">Party:</span> Cash
+              <span className="font-bold ">Party:</span> {party}
             </p>
           </div>
           <div className="flex justify-center space-x-3">
@@ -185,9 +188,14 @@ export default function IPDRadioModal({
               title={"Performed By"}
               onClick={(e) => {
                 setConsultant(e);
+                setMessage('')
               }}
             />
           </div>
+          {
+            message &&
+            <div className="flex justify-center text-red-600 mt-2 font-bold"> {message}</div>
+          }
           <div className="flex justify-center mt-2">
             <p>{(consultant && consultant?.name) || ""}</p>
           </div>
