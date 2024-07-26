@@ -182,7 +182,7 @@ const RadioPDF = ({ billData, radiology, userName }) => {
               <Text
                 style={{ fontSize: "9", width: "15%", textAlign: "center" }}
               >
-                {items?.date}
+                {items?.createdOn}
               </Text>
               <Text
                 style={{ fontSize: "9", width: "20%", textAlign: "center" }}

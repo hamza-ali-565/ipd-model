@@ -189,6 +189,7 @@ export default function IPDRadioModal({
               onClick={(e) => {
                 setConsultant(e);
                 setMessage('')
+                setServiceDetails([])
               }}
             />
           </div>
