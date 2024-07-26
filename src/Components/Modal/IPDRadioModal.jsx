@@ -29,6 +29,7 @@ export default function IPDRadioModal({
   title,
   modalAdmissionNo,
   patientName,
+  party
 }) {
   const [open, setOpen] = useState(false);
   const [data, setData] = useState([]);
@@ -109,10 +110,10 @@ export default function IPDRadioModal({
   // api
   const getData = async () => {
     try {
-      const response = await axios.get(`${url}/allRadioservices?party=Cash`, {
+      const response = await axios.get(`${url}/allRadioservices?party=${party}`, {
         withCredentials: true,
       });
-      console.log(response.data.data);
+      console.log("partyCCC",response.data.data);
       setData(response.data.data);
     } catch (error) {
       console.log("error of get data", error);

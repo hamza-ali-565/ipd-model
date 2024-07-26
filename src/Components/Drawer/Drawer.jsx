@@ -59,6 +59,7 @@ export default function Drawer({
             modalAdmissionNo={modalAdmissionNo}
             patientName={patientName}
             onClick={onClickModalItem}
+            party={Party}
           />
         </MenuItem>
         <MenuItem onClick={() => handleClose("med")}>Medicines</MenuItem>
