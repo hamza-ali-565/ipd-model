@@ -78,6 +78,7 @@ const BedName = () => {
       setOpen(false);
     } catch (error) {
       console.log("Error of getservices", error);
+      setServiceData([])
       setOpen(false);
     }
   };
