@@ -57,6 +57,9 @@ import WardMaster from "./Screens/Setups/Ward/WardMaster";
 import WardName from "./Screens/Setups/Ward/WardName";
 import BedName from "./Screens/Setups/Ward/BedName";
 import Consultant from "./Screens/Setups/Consultant/Consultant";
+import MasterFileOpd from "./Screens/OPD/Master/MasterFileOPd";
+import ConsutantFee from "./Screens/OPD/Master/ConsutantFee";
+
 
 function App() {
   const dispatch = useDispatch();
@@ -214,6 +217,22 @@ function App() {
                 element={<Consultant />}
               ></Route>
             </Route>
+            <Route path="mainpage/*" element={<MainPage />}>
+              <Route index element={<Port />} />
+              <Route path="opd/master*" element={<MasterFileOpd />}>
+                <Route path="consultantfees" element={<ConsutantFee/>} />
+                <Route path="partyname" element={<PartyName />} />
+              </Route>
+              <Route path="setups/ward/*" element={<WardMaster />}>
+                <Route path="wardname" element={<WardName />} />
+                <Route path="bedname" element={<BedName />} />
+              </Route>
+              <Route
+                path="setups/consultant/*"
+                element={<Consultant />}
+              ></Route>
+            </Route>
+
             <Route path="*" element={<Navigate to="/mainpage" replace />} />
           </Routes>
         ) : (

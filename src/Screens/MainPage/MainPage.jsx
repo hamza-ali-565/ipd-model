@@ -87,6 +87,25 @@ const MainPage = () => {
           </Link>
         </Sidebar>
 
+        <Sidebar buttonTitle={"Opd"}>
+          <Link to="/mainpage/opd/master">
+            <SidebarItems
+              title={"Master"}
+              onClick={() => {
+                setToggle(!toggle);
+              }}
+            />
+          </Link>
+          <Link to="/mainpage/opd/transaction">
+            <SidebarItems
+              title={"Transaction"}
+              onClick={() => {
+                setToggle(!toggle);
+              }}
+            />
+          </Link>
+        </Sidebar>
+
         <Sidebar buttonTitle={"IPD"}>
           <Link to="/mainpage/ipdmaster">
             <SidebarItems
