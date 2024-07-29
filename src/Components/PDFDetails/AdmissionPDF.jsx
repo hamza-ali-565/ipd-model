@@ -153,7 +153,7 @@ const AdmissionPDF = ({ billData, userName }) => {
               fixed
               style={[styles.font, { fontWeight: "bold" }, styles.wid]}
             >
-              Nex of Kin Name: {billData?.patientData[0]?.kinName}
+              Next of Kin Name: {billData?.patientData[0]?.kinName}
             </Text>
             <Text fixed style={[styles.font, styles.ml1, styles.wid1]}>
               Relation With Patient: {billData?.patientData[0]?.kinRelation}

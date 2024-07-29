@@ -14,6 +14,7 @@ const PartyName = () => {
   const [parent, setParent] = useState("");
   const [name, setName] = useState("");
   const [partyData, setPartyData] = useState([]);
+  const [updateName, setUpdateName] = useState(null);
 
   const url = useSelector((item) => item.url);
   const userData = useSelector((item) => item?.response);
@@ -28,6 +29,16 @@ const PartyName = () => {
     setParentData([]);
     getParents();
     setPartyData([]);
+    setUpdateName(null);
+  };
+
+  const updateToVar = (name) => {
+    if (updateName) {
+      setUpdateName({ ...updateName, name: name.toUpperCase() });
+      return;
+    }
+
+    setName(name.toUpperCase());
   };
 
   const getParents = async () => {
@@ -71,9 +82,30 @@ const PartyName = () => {
       });
       setPartyData(response.data.data);
       setOpen(false);
+      console.log("party names ", response.data.data);
     } catch (error) {
       console.log("Error of getservices", error);
       setOpen(false);
+    }
+  };
+
+  const partyNameUpdate = async () => {
+    setOpen(true);
+    try {
+      const response = await axios.put(
+        `${url}/partyname`,
+        { name: updateName?.name, partyId: updateName?._id },
+        { withCredentials: true }
+      );
+      console.log(response.data.data);
+      setOpen(false);
+      SuccessAlert({ text: "PARTY NAME UPDATED SUCCESSFULLY" });
+      setUpdateName(null);
+      getParty(parent);
+    } catch (error) {
+      console.log("Error of partyNameUpdate", error);
+      setOpen(false);
+      ErrorAlert({ text: error?.message });
     }
   };
 
@@ -90,31 +122,41 @@ const PartyName = () => {
           <LabeledInput
             label={"Party Name"}
             placeholder={"Enter Party Service Name"}
-            value={name}
-            onChange={(e) => setName(e.target.value.toUpperCase())}
+            value={(updateName && updateName?.name) || name}
+            onChange={(e) => updateToVar(e.target.value)}
           />
           <div className="flex justify-center space-x-2">
-            <ButtonDis title={"Save"} onClick={submitHandler} />
+            <ButtonDis
+              title={(updateName && "Update") || "Save"}
+              onClick={(updateName && partyNameUpdate) || submitHandler}
+            />
             <ButtonDis title={"Refresh"} onClick={resetData} />
           </div>
         </div>
       </div>
       <div className="container mx-auto mt-3">
-        <div className="mt-3 grid grid-cols-4 text-xs justify-items-center items-center h-16 border border-gray-300">
+        <div className="mt-3 grid grid-cols-5 text-xs justify-items-center items-center h-16 border border-gray-300">
           <p>Party Name</p>
           <p>Parent Name</p>
           <p>Created User</p>
           <p>Created Date</p>
+          <p>Update</p>
         </div>
       </div>
       {partyData.length > 0 &&
         partyData?.map((items, index) => (
           <div className="container mx-auto mt-3" key={index}>
-            <div className="mt-3 grid grid-cols-4 text-xs justify-items-center items-center h-10 border border-gray-300">
+            <div className="mt-3 grid grid-cols-5 text-xs justify-items-center items-center h-10 border border-gray-300">
               <p>{items?.name}</p>
               <p>{items?.parent}</p>
               <p>{items?.createdUser}</p>
               <p>{items?.createdOn}</p>
+              <p
+                className="text-red-500 font-bold hover:text-red-700 cursor-pointer"
+                onClick={() => setUpdateName(items)}
+              >
+                Update
+              </p>
             </div>
           </div>
         ))}

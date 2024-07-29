@@ -156,6 +156,15 @@ const FinalBill = () => {
         );
         setDeposit(totalCharges);
       }
+
+      if (response?.data?.data?.radiologyCharges?.length > 0) {
+        const totalCharges = response?.data?.data?.radiologyCharges.reduce(
+          (accumulator, item) => accumulator + item?.amount,
+          0
+        );
+        setRadiologyCharges(totalCharges);
+      }
+
       setBillData(response?.data?.data?.BilData[0]);
       setToggle(!toggle);
       setOpen(false);
@@ -249,6 +258,7 @@ const FinalBill = () => {
     setVisitCharges(0);
     setTotal(0);
     setDeposit(0);
+    setRadiologyCharges(0);
   };
   const handleButtonClick = async (finalbillData) => {
     // Generate a unique key to force re-render

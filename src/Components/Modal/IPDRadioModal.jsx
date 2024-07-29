@@ -29,14 +29,15 @@ export default function IPDRadioModal({
   title,
   modalAdmissionNo,
   patientName,
-  party
+  party,
 }) {
   const [open, setOpen] = useState(false);
   const [data, setData] = useState([]);
   const [toggle, setToggle] = useState(false);
   const [serviceDetails, setServiceDetails] = useState([]);
   const [consultant, setConsultant] = useState(null);
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState("");
+  const [checkDis, setCheckDis] = useState(false);
   const inputRef = useRef(null); // Reference for the input element
 
   React.useEffect(() => {
@@ -47,7 +48,7 @@ export default function IPDRadioModal({
     setData([]);
     setServiceDetails([]);
     setConsultant(null);
-    setMessage('')
+    setMessage("");
   };
 
   const url = useSelector((state) => state.url);
@@ -76,10 +77,10 @@ export default function IPDRadioModal({
 
   const SendData = (item) => {
     if (consultant === null) {
-      setMessage("PLEASE SELECT CONSULTANT NAME FIRST !!!")
+      setMessage("PLEASE SELECT CONSULTANT NAME FIRST !!!");
       return;
     }
-    setMessage('')
+    setMessage("");
     for (const existingItem of serviceDetails) {
       if (existingItem?.serviceId === item?.serviceId) {
         console.log("Item already exists");
@@ -113,10 +114,13 @@ export default function IPDRadioModal({
   // api
   const getData = async () => {
     try {
-      const response = await axios.get(`${url}/allRadioservices?party=${party}`, {
-        withCredentials: true,
-      });
-      console.log("partyCCC",response.data.data);
+      const response = await axios.get(
+        `${url}/allRadioservices?party=${party}`,
+        {
+          withCredentials: true,
+        }
+      );
+      console.log("partyCCC", response.data.data);
       setData(response.data.data);
     } catch (error) {
       console.log("error of get data", error);
@@ -128,6 +132,7 @@ export default function IPDRadioModal({
       if (serviceDetails.length <= 0)
         throw new Error("PLEASE SELECT SERVICE !!!");
       if (consultant === null) throw new Error("Please Select Consultant!!!");
+      setCheckDis(true);
       const response = await axios.post(
         `${url}/ipdradiology`,
         {
@@ -140,9 +145,11 @@ export default function IPDRadioModal({
       console.log("response of createService", response.data);
       handleClose();
       SuccessAlert({ text: "Service added successfully", timer: 2000 });
+      setCheckDis(false);
     } catch (error) {
       console.log("Error of createService", error);
       ErrorAlert({ text: error.message, timer: 2000 });
+      setCheckDis(false);
     }
   };
 
@@ -188,15 +195,17 @@ export default function IPDRadioModal({
               title={"Performed By"}
               onClick={(e) => {
                 setConsultant(e);
-                setMessage('')
-                setServiceDetails([])
+                setMessage("");
+                setServiceDetails([]);
               }}
             />
           </div>
-          {
-            message &&
-            <div className="flex justify-center text-red-600 mt-2 font-bold"> {message}</div>
-          }
+          {message && (
+            <div className="flex justify-center text-red-600 mt-2 font-bold">
+              {" "}
+              {message}
+            </div>
+          )}
           <div className="flex justify-center mt-2">
             <p>{(consultant && consultant?.name) || ""}</p>
           </div>
@@ -263,7 +272,11 @@ export default function IPDRadioModal({
                       </div>
                     ))}
                   <div className="flex justify-center space-x-2 mt-2">
-                    <ButtonDis title={"Save"} onClick={createService} />
+                    <ButtonDis
+                      title={(checkDis && "Please Wait ...") || "Save"}
+                      onClick={createService}
+                      disabled={checkDis}
+                    />
                     <ButtonDis
                       title={"Refresh"}
                       onClick={() =>

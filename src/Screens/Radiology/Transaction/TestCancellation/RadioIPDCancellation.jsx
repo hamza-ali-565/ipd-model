@@ -7,6 +7,7 @@ import axios from "axios";
 import { SuccessAlert } from "../../../../Components/Alert/Alert";
 import LabeledInput from "../../../../Components/LabelledInput/LabeledInput";
 import ButtonDis from "../../../../Components/Button/ButtonDis";
+import AdmissionModal from "../../../../Components/Modal/AdmissionModal";
 
 const RadioIPDCancellation = () => {
   const [serviceDetails, setServiceDetails] = useState([]);
@@ -21,21 +22,38 @@ const RadioIPDCancellation = () => {
     setServiceDetails([]);
   };
 
-  const getDetails = async (data) => {
+  const getDetails2 = async (data) => {
     setLoader(true);
     setmrinfo(data);
+    console.log("admission no", data);
     try {
       const response = await axios.get(
-        `${url}/radiologybooking?radiologyNo=${data?.radiologyNo}`,
+        `${url}/radiologybookingNew?admissionNo=${data?.admissionNo}`,
         { withCredentials: true }
       );
       setServiceDetails(response.data.data);
+      console.log("response of getDetails2", response?.data?.data);
       setLoader(false);
     } catch (error) {
       console.log("Error of get Data", error);
       setLoader(false);
     }
   };
+  // const getDetails = async (data) => {
+  //   setLoader(true);
+  //   setmrinfo(data);
+  //   try {
+  //     const response = await axios.get(
+  //       `${url}/radiologybooking?radiologyNo=${data?.radiologyNo}`,
+  //       { withCredentials: true }
+  //     );
+  //     setServiceDetails(response.data.data);
+  //     setLoader(false);
+  //   } catch (error) {
+  //     console.log("Error of get Data", error);
+  //     setLoader(false);
+  //   }
+  // };
 
   const deleteTest = async (uniqueId) => {
     setLoader(true);
@@ -50,7 +68,7 @@ const RadioIPDCancellation = () => {
       );
       SuccessAlert({ text: "TEST DELETED SUCCESSFULLY", timer: 1000 });
       setLoader(false);
-      getDetails(mrInfo);
+      getDetails2(mrInfo);
     } catch (error) {
       console.log("Error of delete Test", error);
       setLoader(false);
@@ -61,11 +79,12 @@ const RadioIPDCancellation = () => {
       <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
         <CenterHeading title={"Radiology IPD Cancellation"} />
         <div className="flex justify-center mt-2">
-          <RadioTestModal
+          {/* <RadioTestModal
             title={"Select Radiology No."}
             onClick={getDetails}
             patientType={"IPD"}
-          />
+          /> */}
+          <AdmissionModal title={"Select Admission No"} onClick={getDetails2} />
         </div>
         {mrInfo && (
           <div className=" flex flex-col items-center space-y-2 md:grid md:grid-cols-2 md:gap-y-2 md:justify-items-center">
@@ -81,9 +100,9 @@ const RadioIPDCancellation = () => {
             />
             <LabeledInput
               disabled={true}
-              label={"Radiology No"}
-              placeholder={"Radiology No"}
-              value={mrInfo !== null ? mrInfo?.radiologyNo : ""}
+              label={"Admission No"}
+              placeholder={"Admission No"}
+              value={mrInfo !== null ? mrInfo?.admissionNo : ""}
             />
             <LabeledInput
               disabled={true}
@@ -113,10 +132,10 @@ const RadioIPDCancellation = () => {
           </div>
         </div>
         {serviceDetails.length > 0 &&
-          serviceDetails.map((items) => (
-            <div className="container mx-auto mt-3">
+          serviceDetails.map((items, index) => (
+            <div className="container mx-auto mt-3" key={index}>
               <div className="mt-3 grid grid-cols-4 text-xs justify-items-center items-center h-10 border border-gray-300">
-                <p>{items?.serviceName} </p>
+                <p>{items?.serviceName}</p>
                 <p>{items?.amount}</p>
                 <p>{items?.amount}</p>
                 <p
