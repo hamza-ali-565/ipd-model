@@ -21,7 +21,10 @@ const Consultant = () => {
   const [open, setOpen] = useState(false);
   const [details, setDetails] = useState(null);
   const [speciality, setSpeciality] = useState("");
+  const [specialityId, setSpecialityId] = useState("");
   const [updateSpeciality, setUpdateSpeciality] = useState(null);
+  const [days, setDays] = useState("");
+  const [timing, setTiming] = useState("");
 
   const url = useSelector((item) => item.url);
   const userData = useSelector((item) => item?.response);
@@ -37,18 +40,23 @@ const Consultant = () => {
     setStatus(false);
     setDetails(null);
     setSpecialityData(null);
+    setTiming("");
+    setDays("");
   };
 
   const updateDetails = (data) => {
     setDetails(data);
     setName(data?.name);
     setSpecialityData({ speciality: data?.speciality });
+    setSpecialityId(data?._id);
     setPmdc(data?.pmdc);
     setAddress(data?.address);
     setEmail(data?.email);
     setCnic(data?.cnic);
     setPhone(data?.phone);
     setStatus(data?.status);
+    setDays(data?.days);
+    setTiming(data?.timing);
   };
 
   const submitData = async () => {
@@ -58,14 +66,17 @@ const Consultant = () => {
         `${url}/adddoctor`,
         {
           name,
-          speciality: specialityData?.speciality,
-          specialityId: specialityData?._id,
+          speciality:
+            (specialityData && specialityData?.speciality) || speciality,
+          specialityId: (specialityData && specialityData?._id) || specialityId,
           pmdc,
           address,
           email,
           cnic,
           phone,
           status,
+          days,
+          timing,
           createdUser: userData[0].userId,
           _id: (details && details?._id) || "",
         },
@@ -98,7 +109,7 @@ const Consultant = () => {
         },
         { withCredentials: true }
       );
-  
+
       setSpeciality("");
       setUpdateSpeciality(null);
       setOpen(false);
@@ -129,7 +140,9 @@ const Consultant = () => {
       <div className="flex justify-center my-4 space-x-2">
         <ConsultantModal
           title={"Select Consultant"}
-          onClick={(e) => updateDetails(e)}
+          onClick={(e) => {
+            updateDetails(e);
+          }}
           All="Ok"
         />
         <SpecialityModal
@@ -187,6 +200,18 @@ const Consultant = () => {
           type={"checkbox"}
           checked={status}
           onChange={(e) => setStatus(e.target.checked)}
+        />
+        <LabeledInput
+          label={"Days"}
+          placeholder={"MON - TUES - WED"}
+          value={days ? days : ""}
+          onChange={(e) => setDays(e.target.value.toUpperCase())}
+        />
+        <LabeledInput
+          label={"Timing"}
+          onChange={(e) => setTiming(e.target.value)}
+          value={timing ? timing : ""}
+          placeholder={"4pm - 6pm"}
         />
       </div>
       <div className="flex flex-col mt-4 items-center space-y-2 md:flex-row md:justify-center md:space-y-0 md:space-x-2">

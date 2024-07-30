@@ -36,11 +36,13 @@ const ConsutantFee = () => {
     setParty(null);
     setConsultant(null);
     setAmount(0);
+    setConstData([])
   };
   const resetData2 = () => {
     setParty(null);
     setAmount(0);
     setUpdatedDoc(null)
+
     
   };
 
