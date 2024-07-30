@@ -7,10 +7,11 @@ import { useSelector } from "react-redux";
 import Loader from "../../../Components/Modal/Loader";
 import { ErrorAlert, SuccessAlert } from "../../../Components/Alert/Alert";
 import ConsultantModal from "../../../Components/Modal/ConsultantModal";
+import SpecialityModal from "../../../Components/Modal/SpecialityModal";
 
 const Consultant = () => {
   const [name, setName] = useState("");
-  const [speciality, setSpeciality] = useState("");
+  const [specialityData, setSpecialityData] = useState(null);
   const [pmdc, setPmdc] = useState("");
   const [address, setAddress] = useState("");
   const [email, setEmail] = useState("");
@@ -19,6 +20,8 @@ const Consultant = () => {
   const [status, setStatus] = useState(false);
   const [open, setOpen] = useState(false);
   const [details, setDetails] = useState(null);
+  const [speciality, setSpeciality] = useState("");
+  const [updateSpeciality, setUpdateSpeciality] = useState(null);
 
   const url = useSelector((item) => item.url);
   const userData = useSelector((item) => item?.response);
@@ -33,12 +36,13 @@ const Consultant = () => {
     setPhone("");
     setStatus(false);
     setDetails(null);
+    setSpecialityData(null);
   };
 
   const updateDetails = (data) => {
     setDetails(data);
     setName(data?.name);
-    setSpeciality(data?.speciality);
+    setSpecialityData({ speciality: data?.speciality });
     setPmdc(data?.pmdc);
     setAddress(data?.address);
     setEmail(data?.email);
@@ -54,7 +58,8 @@ const Consultant = () => {
         `${url}/adddoctor`,
         {
           name,
-          speciality,
+          speciality: specialityData?.speciality,
+          specialityId: specialityData?._id,
           pmdc,
           address,
           email,
@@ -81,19 +86,24 @@ const Consultant = () => {
     }
   };
 
-  const submitSpeciality = async (req, res) => {
+  const submitSpeciality = async () => {
     try {
       setOpen(true);
       const response = await axios.post(
         `${url}/specialty`,
-        { speciality },
+        {
+          speciality:
+            (updateSpeciality && updateSpeciality?.speciality) || speciality,
+          _id: (updateSpeciality && updateSpeciality?._id) || "",
+        },
         { withCredentials: true }
       );
-      console.log("response of submitSpeciality", response);
+  
       setSpeciality("");
+      setUpdateSpeciality(null);
       setOpen(false);
       SuccessAlert({
-        text: "SPECIALITY CREATED SUCCESSFULLY !!!",
+        text: "SPECIALITY CREATED / UPDATED SUCCESSFULLY !!!",
         timer: 2000,
       });
     } catch (error) {
@@ -102,14 +112,29 @@ const Consultant = () => {
     }
   };
 
+  const handleSpeciality = (name) => {
+    if (updateSpeciality) {
+      setUpdateSpeciality({
+        ...updateSpeciality,
+        speciality: name.toUpperCase(),
+      });
+      return;
+    }
+    setSpeciality(name.toUpperCase());
+  };
+
   return (
     <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
       <CenterHeading title={"Consultant"} />
-      <div className="flex justify-center my-4">
+      <div className="flex justify-center my-4 space-x-2">
         <ConsultantModal
           title={"Select Consultant"}
           onClick={(e) => updateDetails(e)}
           All="Ok"
+        />
+        <SpecialityModal
+          title={"Select Speciality"}
+          onClick={(data) => setSpecialityData(data)}
         />
       </div>
       <div className="flex flex-col items-center space-y-2 mt-3 md:grid md:grid-cols-2 md:justify-items-center md:gap-y-2">
@@ -122,7 +147,8 @@ const Consultant = () => {
         <LabeledInput
           label={"Speciality"}
           placeholder={"Speciality"}
-          value={speciality}
+          value={(specialityData && specialityData?.speciality) || ""}
+          disabled={true}
           onChange={(e) => setSpeciality(e.target.value.toUpperCase())}
         />
         <LabeledInput
@@ -170,16 +196,30 @@ const Consultant = () => {
       <Loader onClick={open} title={"DATA SUBMITTING ..."} />
       <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
         <CenterHeading title={"Create Consultant Speciality"} />
+        <div className="flex justify-center mt-3">
+          <SpecialityModal
+            title={"Update Speciality"}
+            onClick={(data) => setUpdateSpeciality(data)}
+          />
+        </div>
         <div className="flex items-center flex-col space-y-3 mt-4">
           <LabeledInput
             label={"Enter Speciality"}
             placeholder={"Enter Speciality"}
-            onChange={(e) => setSpeciality(e.target.value.toUpperCase())}
-            value={speciality}
+            onChange={(e) => handleSpeciality(e.target.value)}
+            value={
+              (updateSpeciality && updateSpeciality?.speciality) || speciality
+            }
           />
           <div className="flex space-x-3">
             <ButtonDis title={"Save"} onClick={submitSpeciality} />
-            <ButtonDis title={"Refresh"} onClick={() => setSpeciality("")} />
+            <ButtonDis
+              title={"Refresh"}
+              onClick={() => {
+                setSpeciality("");
+                setUpdateSpeciality(null);
+              }}
+            />
           </div>
         </div>
       </div>
