@@ -57,6 +57,9 @@ const ConsutantFee = () => {
       SuccessAlert({ text: "CONSULTANT CREATED SUCCESSFULLY", timer: 2000 });
       console.log("response of createDocOfConsCharges", response);
       setOpen(false);
+      getSpecificConsultant(consultant)
+      setAmount(0)
+      setParty(null)
     } catch (error) {
       console.log("Error of createDocOfConsCharges", error);
       setOpen(false);
@@ -64,65 +67,96 @@ const ConsutantFee = () => {
   };
 
   const getSpecificConsultant = async (name) => {
+    setOpen(true)
     try {
       const response = await axios.get(
         `${url}/opd/findDrCharges?consultantId=${name?._id}`,
         { withCredentials: true }
       );
       console.log("Response of getSpecificConsultant", response.data.data.data);
-      setConstData(response.data.data.data)
+      setConstData(response.data.data.data);
+      setOpen(false)
     } catch (error) {
       console.log("Error of getSpecificConsultant", error);
+      setConstData([])
+      setOpen(false)
     }
   };
 
   return (
-    <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
-      <CenterHeading title={"Consultant Fee"} />
-      <div className="flex justify-center items-center flex-col space-y-3 mt-3">
-        <div className="flex space-x-2">
-          <ConsultantModal
-            title={"Select Consultant Name"}
-            onClick={(name) => {
-              setConsultant(name);
-              resetData2();
-              getSpecificConsultant(name);
+    <div>
+      <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
+        <CenterHeading title={"Consultant Fee"} />
+        <div className="flex justify-center items-center flex-col space-y-3 mt-3">
+          <div className="flex space-x-2">
+            <ConsultantModal
+              title={"Select Consultant Name"}
+              onClick={(name) => {
+                setConsultant(name);
+                resetData2();
+                getSpecificConsultant(name);
+              }}
+            />
+            <PartyModal
+              title={"Select Party Name"}
+              onClick={(name) => updateParty(name)}
+            />
+          </div>
+          <LabeledInput
+            label={"Amount"}
+            placeholder={"Enter Amonunt"}
+            onChange={(e) => {
+              updateAmount(e.target.value);
             }}
+            value={amount}
           />
-          <PartyModal
-            title={"Select Party Name"}
-            onClick={(name) => updateParty(name)}
-          />
+          {party && (
+            <LabeledInput
+              label={"Selected Party"}
+              placeholder={"Selected Party"}
+              disabled={true}
+              value={(party && party?.name) || ""}
+            />
+          )}
+          {consultant && (
+            <LabeledInput
+              label={"Selected Consultant"}
+              placeholder={"Selected Consultant"}
+              value={(consultant && consultant?.name) || ""}
+            />
+          )}
         </div>
-        <LabeledInput
-          label={"Amount"}
-          placeholder={"Enter Amonunt"}
-          onChange={(e) => {
-            updateAmount(e.target.value);
-          }}
-          value={amount}
-        />
-        {party && (
-          <LabeledInput
-            label={"Selected Party"}
-            placeholder={"Selected Party"}
-            disabled={true}
-            value={(party && party?.name) || ""}
-          />
-        )}
-        {consultant && (
-          <LabeledInput
-            label={"Selected Consultant"}
-            placeholder={"Selected Consultant"}
-            value={(consultant && consultant?.name) || ""}
-          />
-        )}
+        <div className="flex justify-center space-x-3 mt-3">
+          <ButtonDis title={"Save"} onClick={createDocOfConsCharges} />
+          <ButtonDis title={"Refresh"} onClick={resetData} />
+        </div>
+
+        <Loader onClick={open} title={"Please Wait ..."} />
       </div>
-      <div className="flex justify-center space-x-3 mt-3">
-        <ButtonDis title={"Save"} onClick={createDocOfConsCharges} />
-        <ButtonDis title={"Refresh"} onClick={resetData} />
+      <div className="container mx-auto mt-3">
+        <div className="mt-3 grid grid-cols-5 text-xs justify-items-center items-center h-16 border border-gray-300">
+          <p>Consultant Name</p>
+          <p>Party Name</p>
+          <p>Amount</p>
+          <p>Created User</p>
+          <p>Update</p>
+        </div>
+        {consData &&
+          consData.map((items, index) => (
+            <div className="mt-3 grid grid-cols-5 text-xs justify-items-center items-center h-10 border border-gray-300">
+              <p>{items?.consultantName}</p>
+              <p>{items?.party}</p>
+              <p>{items?.amount}</p>
+              <p>{items?.createdUser}</p>
+              <p
+                className="text-red-500 font-bold hover:text-red-700 cursor-pointer"
+                // onClick={() => setUpdateName(items)}
+              >
+                Update
+              </p>
+            </div>
+          ))}
       </div>
-      <Loader onClick={open} title={"Please Wait ..."} />
     </div>
   );
 };
