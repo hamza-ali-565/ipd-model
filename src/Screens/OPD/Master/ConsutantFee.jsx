@@ -14,6 +14,7 @@ const ConsutantFee = () => {
   const [consultant, setConsultant] = useState(null);
   const [amount, setAmount] = useState(0);
   const [open, setOpen] = useState(false);
+  const [consData, setConstData] = useState([]);
 
   const url = useSelector((state) => state?.url);
 
@@ -28,6 +29,10 @@ const ConsutantFee = () => {
   const resetData = () => {
     setParty(null);
     setConsultant(null);
+    setAmount(0);
+  };
+  const resetData2 = () => {
+    setParty(null);
     setAmount(0);
   };
 
@@ -58,6 +63,19 @@ const ConsutantFee = () => {
     }
   };
 
+  const getSpecificConsultant = async (name) => {
+    try {
+      const response = await axios.get(
+        `${url}/opd/findDrCharges?consultantId=${name?._id}`,
+        { withCredentials: true }
+      );
+      console.log("Response of getSpecificConsultant", response.data.data.data);
+      setConstData(response.data.data.data)
+    } catch (error) {
+      console.log("Error of getSpecificConsultant", error);
+    }
+  };
+
   return (
     <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
       <CenterHeading title={"Consultant Fee"} />
@@ -67,6 +85,8 @@ const ConsutantFee = () => {
             title={"Select Consultant Name"}
             onClick={(name) => {
               setConsultant(name);
+              resetData2();
+              getSpecificConsultant(name);
             }}
           />
           <PartyModal
