@@ -15,6 +15,7 @@ const ConsutantFee = () => {
   const [amount, setAmount] = useState(0);
   const [open, setOpen] = useState(false);
   const [consData, setConstData] = useState([]);
+  const [updatedDoc, setUpdatedDoc] = useState(null);
 
   const url = useSelector((state) => state?.url);
 
@@ -23,6 +24,11 @@ const ConsutantFee = () => {
       ErrorAlert({ text: "PLEASE SELECT CONSULTANT FIRST !!!", timer: 2000 });
       return;
     }
+    if (updatedDoc) {
+      ErrorAlert({ text: "Party Already Selected", timer: 2000 });
+      return;
+    }
+    // console.log(name);
     setParty(name);
   };
 
@@ -34,9 +40,14 @@ const ConsutantFee = () => {
   const resetData2 = () => {
     setParty(null);
     setAmount(0);
+    setUpdatedDoc(null)
+    
   };
 
   const updateAmount = (charges) => {
+    if (updatedDoc) {
+      return setUpdatedDoc({ ...updatedDoc, amount: charges });
+    }
     setAmount(charges);
   };
 
@@ -48,26 +59,28 @@ const ConsutantFee = () => {
         {
           consultantName: consultant?.name,
           consultantId: consultant?._id,
-          party: party?.name,
-          partyId: party?._id,
-          amount,
+          party: (party && party?.name) || (updatedDoc && updatedDoc?.party),
+          partyId: (party && party?._id) || (updatedDoc && updatedDoc?.partyId),
+          amount: (updatedDoc && updatedDoc?.amount) || amount,
         },
         { withCredentials: true }
       );
       SuccessAlert({ text: "CONSULTANT CREATED SUCCESSFULLY", timer: 2000 });
       console.log("response of createDocOfConsCharges", response);
       setOpen(false);
-      getSpecificConsultant(consultant)
-      setAmount(0)
-      setParty(null)
+      getSpecificConsultant(consultant);
+      setAmount(0);
+      setParty(null);
+      setUpdatedDoc(null);
     } catch (error) {
       console.log("Error of createDocOfConsCharges", error);
       setOpen(false);
+      ErrorAlert({text: error.message})
     }
   };
 
   const getSpecificConsultant = async (name) => {
-    setOpen(true)
+    setOpen(true);
     try {
       const response = await axios.get(
         `${url}/opd/findDrCharges?consultantId=${name?._id}`,
@@ -75,11 +88,11 @@ const ConsutantFee = () => {
       );
       console.log("Response of getSpecificConsultant", response.data.data.data);
       setConstData(response.data.data.data);
-      setOpen(false)
+      setOpen(false);
     } catch (error) {
       console.log("Error of getSpecificConsultant", error);
-      setConstData([])
-      setOpen(false)
+      setConstData([]);
+      setOpen(false);
     }
   };
 
@@ -108,16 +121,20 @@ const ConsutantFee = () => {
             onChange={(e) => {
               updateAmount(e.target.value);
             }}
-            value={amount}
+            value={(updatedDoc && updatedDoc?.amount) || amount}
           />
-          {party && (
+          {party || updatedDoc ? (
             <LabeledInput
               label={"Selected Party"}
               placeholder={"Selected Party"}
               disabled={true}
-              value={(party && party?.name) || ""}
+              value={
+                (updatedDoc && updatedDoc?.party) ||
+                (party && party?.name) ||
+                ""
+              }
             />
-          )}
+          ) : null}
           {consultant && (
             <LabeledInput
               label={"Selected Consultant"}
@@ -141,16 +158,19 @@ const ConsutantFee = () => {
           <p>Created User</p>
           <p>Update</p>
         </div>
-        {consData &&
+        {consData.length > 0 &&
           consData.map((items, index) => (
-            <div className="mt-3 grid grid-cols-5 text-xs justify-items-center items-center h-10 border border-gray-300">
+            <div
+              className="mt-3 grid grid-cols-5 text-xs justify-items-center items-center h-10 border border-gray-300"
+              key={index}
+            >
               <p>{items?.consultantName}</p>
               <p>{items?.party}</p>
               <p>{items?.amount}</p>
               <p>{items?.createdUser}</p>
               <p
                 className="text-red-500 font-bold hover:text-red-700 cursor-pointer"
-                // onClick={() => setUpdateName(items)}
+                onClick={() => setUpdatedDoc(items)}
               >
                 Update
               </p>
