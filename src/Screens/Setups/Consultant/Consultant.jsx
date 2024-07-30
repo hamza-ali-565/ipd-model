@@ -81,6 +81,27 @@ const Consultant = () => {
     }
   };
 
+  const submitSpeciality = async (req, res) => {
+    try {
+      setOpen(true);
+      const response = await axios.post(
+        `${url}/specialty`,
+        { speciality },
+        { withCredentials: true }
+      );
+      console.log("response of submitSpeciality", response);
+      setSpeciality("");
+      setOpen(false);
+      SuccessAlert({
+        text: "SPECIALITY CREATED SUCCESSFULLY !!!",
+        timer: 2000,
+      });
+    } catch (error) {
+      console.log("Error of submitSpeciality", error);
+      setOpen(false);
+    }
+  };
+
   return (
     <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
       <CenterHeading title={"Consultant"} />
@@ -147,6 +168,21 @@ const Consultant = () => {
         <ButtonDis title={"Refresh"} onClick={resetFunction} />
       </div>
       <Loader onClick={open} title={"DATA SUBMITTING ..."} />
+      <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
+        <CenterHeading title={"Create Consultant Speciality"} />
+        <div className="flex items-center flex-col space-y-3 mt-4">
+          <LabeledInput
+            label={"Enter Speciality"}
+            placeholder={"Enter Speciality"}
+            onChange={(e) => setSpeciality(e.target.value.toUpperCase())}
+            value={speciality}
+          />
+          <div className="flex space-x-3">
+            <ButtonDis title={"Save"} onClick={submitSpeciality} />
+            <ButtonDis title={"Refresh"} onClick={() => setSpeciality("")} />
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
