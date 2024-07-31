@@ -60,6 +60,9 @@ import Consultant from "./Screens/Setups/Consultant/Consultant";
 import MasterFileOpd from "./Screens/OPD/Master/MasterFileOPd";
 import ConsutantFee from "./Screens/OPD/Master/ConsutantFee";
 import ConsultantSchedule from "./Screens/OPD/Master/ConsultantSchedule";
+import TransactionMasterOPD from "./Screens/OPD/Transaction/TransactionMasterOPD";
+import OPDRegistraion from "./Screens/OPD/Transaction/OPDRegistraion";
+import OPDRefund from "./Screens/OPD/Transaction/OPDRefund";
 
 
 function App() {
@@ -218,15 +221,16 @@ function App() {
                 element={<Consultant />}
               ></Route>
             </Route>
+          {/* OPD */}
             <Route path="mainpage/*" element={<MainPage />}>
               <Route index element={<Port />} />
               <Route path="opd/master*" element={<MasterFileOpd />}>
                 <Route path="consultantfees" element={<ConsutantFee/>} />
                 <Route path="consultantschedule" element={<ConsultantSchedule/>} />
               </Route>
-              <Route path="setups/ward/*" element={<WardMaster />}>
-                <Route path="wardname" element={<WardName />} />
-                <Route path="bedname" element={<BedName />} />
+              <Route path="opd/transaction/*" element={<TransactionMasterOPD />}>
+                <Route path="opdregistration" element={<OPDRegistraion />} />
+                <Route path="opdcancellation" element={<OPDRefund />} />
               </Route>
               <Route
                 path="setups/consultant/*"
