@@ -14,6 +14,7 @@ import PaymentRefundPDF from "../../../../Components/PDFDetails/PaymentRefundPDF
 import { pdf } from "@react-pdf/renderer";
 import { v4 as uuidv4 } from "uuid";
 import RadioRefundModal from "../../../../Components/Modal/RadioRefundModal";
+import OPDModal from "../../../../Components/Modal/OPDModal";
 
 const PaymentRefund = () => {
   const [paymentType, setPaymentType] = useState("");
@@ -49,6 +50,7 @@ const PaymentRefund = () => {
       { name: "Agaisnt IPD Bill" },
       { name: "Agaisnt ER Bill" },
       { name: "Agaisnt Radiology" },
+      { name: "Agaisnt OPD" },
     ]);
 
     setLocationData([
@@ -239,6 +241,16 @@ const PaymentRefund = () => {
       setOpen(false);
     }
   };
+
+  // gey opd
+  const getOPD = async  (data) =>{
+    try {
+      setMrInfo(data)
+      
+    } catch (error) {
+      console.log("ERROR OF GET OPD ", getOPD);
+    }
+  }
   return (
     <div>
       <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
@@ -267,7 +279,8 @@ const PaymentRefund = () => {
           />
 
           {(paymentAgainst === "Agaisnt IPD Bill" ||
-            paymentAgainst === "Agaisnt Radiology") && (
+            paymentAgainst === "Agaisnt Radiology" ||
+            paymentAgainst === "Agaisnt OPD") && (
             <div className="flex items-center flex-col space-y-2">
               {paymentAgainst === "Agaisnt IPD Bill" ? (
                 <BillToRefundModal
@@ -278,6 +291,11 @@ const PaymentRefund = () => {
                 <RadioRefundModal
                   title={"Select Radiology No"}
                   onClick={(e) => getRadiology(e)}
+                />
+              ) : paymentAgainst === "Agaisnt OPD" ? (
+                <OPDModal
+                  title={"Select OPD No"}
+                  onClick={(e) => getOPD(e)}
                 />
               ) : (
                 ""
@@ -298,11 +316,13 @@ const PaymentRefund = () => {
                 placeholder={
                   (paymentAgainst === "Agaisnt IPD Bill" && "Bill No") ||
                   (paymentAgainst === "Agaisnt Radiology" && "Radiology No") ||
+                  (paymentAgainst === "Agaisnt OPD" && "OPD No") ||
                   ""
                 }
                 label={
                   (paymentAgainst === "Agaisnt IPD Bill" && "Admission No") ||
                   (paymentAgainst === "Agaisnt Radiology" && "Radiology No") ||
+                  (paymentAgainst === "Agaisnt OPD" && "OPD No") ||
                   ""
                 }
                 value={
