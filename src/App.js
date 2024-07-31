@@ -59,6 +59,7 @@ import BedName from "./Screens/Setups/Ward/BedName";
 import Consultant from "./Screens/Setups/Consultant/Consultant";
 import MasterFileOpd from "./Screens/OPD/Master/MasterFileOPd";
 import ConsutantFee from "./Screens/OPD/Master/ConsutantFee";
+import ConsultantSchedule from "./Screens/OPD/Master/ConsultantSchedule";
 
 
 function App() {
@@ -221,7 +222,7 @@ function App() {
               <Route index element={<Port />} />
               <Route path="opd/master*" element={<MasterFileOpd />}>
                 <Route path="consultantfees" element={<ConsutantFee/>} />
-                <Route path="partyname" element={<PartyName />} />
+                <Route path="consultantschedule" element={<ConsultantSchedule/>} />
               </Route>
               <Route path="setups/ward/*" element={<WardMaster />}>
                 <Route path="wardname" element={<WardName />} />

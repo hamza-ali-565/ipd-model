@@ -48,7 +48,7 @@ const Consultant = () => {
     setDetails(data);
     setName(data?.name);
     setSpecialityData({ speciality: data?.speciality });
-    setSpecialityId(data?._id);
+    setSpecialityId(data?.specialityId);
     setPmdc(data?.pmdc);
     setAddress(data?.address);
     setEmail(data?.email);
