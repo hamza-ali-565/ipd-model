@@ -84,7 +84,6 @@ const OPDRegistraion = () => {
       if (mrInfo === null) throw new Error("PLEASE SELECT MR NO");
       if (party === null) throw new Error("PLEASE SELECT PARTY");
       if (consultant === null) throw new Error("PLEASE SELECT CONSULTANT");
-      if (serviceDetails.length === 0) throw new Error("PLEASE SELECT SERVICE");
       if (amount === 0) throw new Error("PLEASE ENTER AMOUNT");
       if (paymentType === "" || paymentType === "--")
         throw new Error("PLEASE SELECT PAYMENT TYPE");
@@ -100,27 +99,27 @@ const OPDRegistraion = () => {
     setOpen(true);
     try {
       const response = await axios.post(
-        `${url}/radiologybooking`,
+        `${url}/opd/opdRegistraion`,
         {
           mrNo: mrInfo?.MrNo,
-          consultant: consultant?.name,
-          party: party?.name,
+          consultantName: consultant?.name,
+          consultantId: consultant?._id,
+          partyName: party?.name,
+          partyId: party?._id,
           amount,
           paymentType,
           location,
           remarks,
-          serviceDetails,
-          createdUser: userData[0]?.userId,
           shiftNo: shiftData[0].ShiftNo,
         },
         { withCredentials: true }
       );
       console.log("Response of submit data", response.data);
-      setBookingResponse(response.data);
+    //   setBookingResponse(response.data);
       SuccessAlert({ text: "RADIOLOGY CREATED SUCCESSFULLY", timer: 2000 });
       refreshData();
       setOpen(false);
-      PrintRadiology(response.data);
+    //   PrintRadiology(response.data);
     } catch (error) {
       console.log("Error of Submit Data", error);
       setOpen(false);
