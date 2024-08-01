@@ -118,10 +118,7 @@ const OPDRegistraion = () => {
   };
 
   const opdPDFPrint = async (data) => {
-    // if (mrInfo === null) {
-    //   ErrorAlert({ text: "NO DATA TO BE PRINT !!!", timer: 2000 });
-    //   return;
-    // }
+
     const key = uuidv4();
 
     // Create a PDF document as a Blob
