@@ -20,6 +20,7 @@ import { pdf } from "@react-pdf/renderer";
 import { v4 as uuidv4 } from "uuid";
 import RadiologyBookingPDF from "../../../Components/PDFDetails/RadiologyBookingPDF";
 import RadioTestModal from "../../../Components/Modal/RadioTestModal";
+import OPDModal from "../../../Components/Modal/OPDModal";
 
 const OPDRegistraion = () => {
   const [paymentType, setPaymentType] = useState("");
@@ -27,7 +28,7 @@ const OPDRegistraion = () => {
   const [mrInfo, setmrInfo] = useState(null);
   const [party, setParty] = useState(null);
   const [consultant, setConsultant] = useState(null);
-  const [serviceDetails, setServiceDetails] = useState([]);
+  const [currentToken, setCurrentToken] = useState("");
   const [remarks, setRemarks] = useState("");
   const [amount, setAmount] = useState(0);
   const [paymentTypeData, setPaymentTypeData] = useState([]);
@@ -58,19 +59,11 @@ const OPDRegistraion = () => {
     ]);
   }, [toggle]);
 
-  const SumAmount = (e) => {
-    setServiceDetails(e);
-    let sum = 0;
-    e.map((item) => {
-      sum += +item.amount;
-    });
-    setAmount(sum);
-  };
   const refreshData = () => {
     setmrInfo(null);
     setParty(null);
     setConsultant(null);
-    setServiceDetails([]);
+    setCurrentToken("");
     setRemarks("");
     setAmount(0);
     setPaymentTypeData([]);
@@ -115,11 +108,11 @@ const OPDRegistraion = () => {
         { withCredentials: true }
       );
       console.log("Response of submit data", response.data);
-    //   setBookingResponse(response.data);
-      SuccessAlert({ text: "RADIOLOGY CREATED SUCCESSFULLY", timer: 2000 });
+      //   setBookingResponse(response.data);
+      SuccessAlert({ text: "OPD CREATED SUCCESSFULLY", timer: 2000 });
       refreshData();
       setOpen(false);
-    //   PrintRadiology(response.data);
+      //   PrintRadiology(response.data);
     } catch (error) {
       console.log("Error of Submit Data", error);
       setOpen(false);
@@ -148,31 +141,22 @@ const OPDRegistraion = () => {
     url = "";
   };
 
-  const getDetails = async (name) => {
-    setOpen(true);
+  const getToken = async (data) => {
     try {
+      setCurrentToken("Token loading wait ...");
+      console.log("data", data);
       const response = await axios.get(
-        `${url}/radiologypdf?radiologyNo=${name?.radiologyNo}&mrNo=${name?.mrNo}`,
+        `${url}/opd/lastToken?consultantId=${data?._id}`,
         { withCredentials: true }
       );
-      setOpen(false);
-      const ask = await AskingAlert({
-        text: `YOU WANT TO PRINT RADIOLOGY NO ${name?.radiologyNo}`,
-      });
-      if (ask) {
-        console.log("ok");
-        PrintRadiology(response.data);
-      } else {
-        console.log("User canceled");
-        return;
-      }
+      console.log("response of getToken", response);
+      setCurrentToken(response?.data?.data?.data?.tokenNo);
     } catch (error) {
-      console.log("Error of get Details", error);
+      console.log("Error of get Token", error);
       setOpen(false);
     }
   };
   const selectParty = (e) => {
-    setServiceDetails([]);
     setParty(e);
   };
 
@@ -184,7 +168,6 @@ const OPDRegistraion = () => {
       }
       setOpen(true);
       setConsultant(data);
-      const { name, _id } = data;
       const response = await axios.get(
         `${url}/opd/findDrChargesPartyWise?consultantId=${data?._id}&partyId=${party?._id}`,
         { withCredentials: true }
@@ -193,6 +176,7 @@ const OPDRegistraion = () => {
       setAmount(response.data.data.data[0]?.amount);
       console.log("response of getCharges", response);
       setMessage("");
+      getToken(data);
     } catch (error) {
       console.log("Error of getCharges", error);
       setOpen(false);
@@ -226,16 +210,10 @@ const OPDRegistraion = () => {
             title={"Select Consultant"}
             onClick={(e) => getCharges(e)}
           />
-          {/* <RadiologyServiceModal
-            title={"Select Tests"}
-            modalAdmissionNo={party !== null ? party?.name : ""}
-            onClick={(e) => SumAmount(e)}
-          /> */}
-          {/* <RadioTestModal
-            title={"Select Radiology No."}
-            onClick={getDetails}
-            patientType={"Cash"}
-          /> */}
+          <OPDModal
+            onClick={(data) => console.log("data of opd modal ", data)}
+            title={"SELECT OPD NO."}
+          />
         </div>
       </div>
       <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
@@ -342,6 +320,7 @@ const OPDRegistraion = () => {
             disabled={true}
             label={"Your Token No"}
             placeholder={"Token No"}
+            value={currentToken}
           />
         </div>
 
