@@ -110,7 +110,7 @@ const OPDRegistraion = () => {
       SuccessAlert({ text: "OPD CREATED SUCCESSFULLY", timer: 2000 });
       refreshData();
       setOpen(false);
-      //   PrintRadiology(response.data);
+      opdPDFPrint(response.data.data);
     } catch (error) {
       console.log("Error of Submit Data", error);
       setOpen(false);
