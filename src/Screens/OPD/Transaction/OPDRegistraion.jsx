@@ -164,7 +164,7 @@ const OPDRegistraion = () => {
       );
       setOpen(false);
       const ask = await AskingAlert({
-        text: `YOU WANT TO PRINT RADIOLOGY NO ${name?.radiologyNo}`,
+        text: `YOU WANT TO PRINT OPD NO ${name?.opdNo}`,
       });
       if (ask) {
         console.log("ok", response.data.data);
