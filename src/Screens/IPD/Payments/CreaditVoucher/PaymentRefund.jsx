@@ -73,8 +73,14 @@ const PaymentRefund = () => {
     setMrInfo(null);
     setRefundData(null);
     setUniqueId([]);
-
     setToggle(!toggle);
+  };
+  const resetData2 = () => {
+    setAmount(null);
+    setRemarks("");
+    setMrInfo(null);
+    setRefundData(null);
+    setUniqueId([]);
   };
 
   const printReciept = (e) => {
@@ -126,6 +132,9 @@ const PaymentRefund = () => {
         );
       if (uniqueId.length > 0) {
         RadiologyRefund();
+        return;
+      } else if (paymentAgainst === "Agaisnt OPD") {
+        opdRefund();
         return;
       }
       submitRefund();
@@ -210,7 +219,6 @@ const PaymentRefund = () => {
   };
 
   // submit radiology refund
-
   const RadiologyRefund = async () => {
     setOpen(true);
     try {
@@ -242,15 +250,53 @@ const PaymentRefund = () => {
     }
   };
 
-  // gey opd
-  const getOPD = async  (data) =>{
+  // submit opd refund
+  const opdRefund = async () => {
+    setOpen(true);
     try {
-      setMrInfo(data)
-      
+      const response = await axios.put(
+        `${url}/opd/opdRefund`,
+        {
+          refundAgainst: paymentAgainst,
+          refundType: paymentType,
+          location,
+          refundAmount: amount,
+          shiftNo: shiftData[0].ShiftNo,
+          againstNo: mrInfo?.opdNo,
+          mrNo: mrInfo?.mrNo,
+          remarks,
+        },
+        { withCredentials: true }
+      );
+      console.log("response of radiology refund", response);
+      SuccessAlert({ text: "REFUND CREATED SUCCESSFULLY", timer: 2000 });
+      resetData();
+      setOpen(false);
+      PaymentPrint(response?.data?.data.data);
+    } catch (error) {
+      console.log("Error of radiology refund", error);
+      ErrorAlert({ text: error.message });
+      setOpen(false);
+    }
+  };
+
+  // get opd refunded amount
+  const getOPD = async (data) => {
+    try {
+      setOpen(true);
+      setMrInfo(data);
+      const response = await axios.get(
+        `${url}/opd/forPrintdata?opdNo=${data?.opdNo}&mrNo=${data?.mrNo}&message=hello`,
+        { withCredentials: true }
+      );
+      console.log("response of get OPD", response);
+      setOpen(false);
+      setAmount(response?.data?.data?.data[0]?.amount);
     } catch (error) {
       console.log("ERROR OF GET OPD ", getOPD);
+      setOpen(false);
     }
-  }
+  };
   return (
     <div>
       <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
@@ -265,7 +311,10 @@ const PaymentRefund = () => {
           <SimpleDropDown
             DropDownLabel={"Refund Agaisnt"}
             data={paymentAgainstData}
-            onChange={(e) => setPaymentAgaisnt(e)}
+            onChange={(e) => {
+              setPaymentAgaisnt(e);
+              resetData2();
+            }}
           />
           <SimpleDropDown
             DropDownLabel={"Refund Type"}
@@ -293,10 +342,7 @@ const PaymentRefund = () => {
                   onClick={(e) => getRadiology(e)}
                 />
               ) : paymentAgainst === "Agaisnt OPD" ? (
-                <OPDModal
-                  title={"Select OPD No"}
-                  onClick={(e) => getOPD(e)}
-                />
+                <OPDModal title={"Select OPD No"} onClick={(e) => getOPD(e)} />
               ) : (
                 ""
               )}
@@ -328,6 +374,7 @@ const PaymentRefund = () => {
                 value={
                   (mrInfo?.admissionNo && mrInfo?.admissionNo) ||
                   (mrInfo?.radiologyNo && mrInfo?.radiologyNo) ||
+                  (mrInfo?.opdNo && mrInfo?.opdNo) ||
                   ""
                 }
               />
