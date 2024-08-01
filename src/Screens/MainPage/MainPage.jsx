@@ -87,7 +87,7 @@ const MainPage = () => {
           </Link>
         </Sidebar>
 
-        <Sidebar buttonTitle={"Opd"}>
+        <Sidebar buttonTitle={"OPD"}>
           <Link to="/mainpage/opd/master">
             <SidebarItems
               title={"Master"}
@@ -97,6 +97,25 @@ const MainPage = () => {
             />
           </Link>
           <Link to="/mainpage/opd/transaction">
+            <SidebarItems
+              title={"Transaction"}
+              onClick={() => {
+                setToggle(!toggle);
+              }}
+            />
+          </Link>
+        </Sidebar>
+
+        <Sidebar buttonTitle={"LAB"}>
+          <Link to="/mainpage/lab/master">
+            <SidebarItems
+              title={"Master"}
+              onClick={() => {
+                setToggle(!toggle);
+              }}
+            />
+          </Link>
+          <Link to="/mainpage/lab/transaction">
             <SidebarItems
               title={"Transaction"}
               onClick={() => {

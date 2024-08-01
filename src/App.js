@@ -63,6 +63,8 @@ import ConsultantSchedule from "./Screens/OPD/Master/ConsultantSchedule";
 import TransactionMasterOPD from "./Screens/OPD/Transaction/TransactionMasterOPD";
 import OPDRegistraion from "./Screens/OPD/Transaction/OPDRegistraion";
 import OPDRefund from "./Screens/OPD/Transaction/OPDRefund";
+import LabTest from "./Screens/LAB/MASTER/Text.lab";
+import MasterFileLab from "./Screens/LAB/MASTER/Master.file.lab";
 
 
 function App() {
@@ -237,6 +239,24 @@ function App() {
                 element={<Consultant />}
               ></Route>
             </Route>
+
+            {/* LAB */}
+            <Route path="mainpage/*" element={<MainPage />}>
+              <Route index element={<Port />} />
+              <Route path="lab/master*" element={<MasterFileLab />}>
+                <Route path="test" element={<LabTest/>} />
+                <Route path="consultantschedule" element={<ConsultantSchedule/>} />
+              </Route>
+              <Route path="lab/transaction/*" element={<TransactionMasterOPD />}>
+                <Route path="opdregistration" element={<OPDRegistraion />} />
+                <Route path="opdcancellation" element={<OPDRefund />} />
+              </Route>
+              <Route
+                path="setups/consultant/*"
+                element={<Consultant />}
+              ></Route>
+            </Route>
+
 
             <Route path="*" element={<Navigate to="/mainpage" replace />} />
           </Routes>
