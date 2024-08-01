@@ -5,7 +5,6 @@ import BasicModal from "../../../Components/Modal/FullScreenModal";
 import LabeledInput from "../../../Components/LabelledInput/LabeledInput";
 import PartyModal from "../../../Components/Modal/PartyModal";
 import ConsultantModal from "../../../Components/Modal/ConsultantModal";
-import RadiologyServiceModal from "../../../Components/Modal/RadiologyServiceModal";
 import ButtonDis from "../../../Components/Button/ButtonDis";
 import {
   AskingAlert,
@@ -18,9 +17,8 @@ import axios from "axios";
 import Loader from "../../../Components/Modal/Loader";
 import { pdf } from "@react-pdf/renderer";
 import { v4 as uuidv4 } from "uuid";
-import RadiologyBookingPDF from "../../../Components/PDFDetails/RadiologyBookingPDF";
-import RadioTestModal from "../../../Components/Modal/RadioTestModal";
 import OPDModal from "../../../Components/Modal/OPDModal";
+import OPDRegistrationPDF from "../../../Components/PDFDetails/OPDRegistrationPDF";
 
 const OPDRegistraion = () => {
   const [paymentType, setPaymentType] = useState("");
@@ -119,7 +117,7 @@ const OPDRegistraion = () => {
     }
   };
 
-  const PrintRadiology = async (data) => {
+  const opdPDFPrint = async (data) => {
     // if (mrInfo === null) {
     //   ErrorAlert({ text: "NO DATA TO BE PRINT !!!", timer: 2000 });
     //   return;
@@ -128,7 +126,7 @@ const OPDRegistraion = () => {
 
     // Create a PDF document as a Blob
     const blob = await pdf(
-      <RadiologyBookingPDF
+      <OPDRegistrationPDF
         key={key}
         userName={userData[0]?.userId}
         radioDetails={data}
@@ -158,6 +156,30 @@ const OPDRegistraion = () => {
   };
   const selectParty = (e) => {
     setParty(e);
+  };
+
+  const getDetails = async (name) => {
+    setOpen(true);
+    try {
+      const response = await axios.get(
+        `${url}/opd/forPrintdata?opdNo=${name?.opdNo}&mrNo=${name?.mrNo}`,
+        { withCredentials: true }
+      );
+      setOpen(false);
+      const ask = await AskingAlert({
+        text: `YOU WANT TO PRINT RADIOLOGY NO ${name?.radiologyNo}`,
+      });
+      if (ask) {
+        console.log("ok", response.data.data);
+        opdPDFPrint(response.data.data);
+      } else {
+        console.log("User canceled");
+        return;
+      }
+    } catch (error) {
+      console.log("Error of get Details", error);
+      setOpen(false);
+    }
   };
 
   const getCharges = async (data) => {
@@ -211,7 +233,7 @@ const OPDRegistraion = () => {
             onClick={(e) => getCharges(e)}
           />
           <OPDModal
-            onClick={(data) => console.log("data of opd modal ", data)}
+            onClick={(data) => getDetails(data)}
             title={"SELECT OPD NO."}
           />
         </div>
@@ -326,7 +348,7 @@ const OPDRegistraion = () => {
 
         <div className="flex flex-col items-center space-y-2 mt-2 md:flex-row md:space-y-0 md:space-x-2 md:justify-center">
           <ButtonDis title={"Save"} onClick={CheckValidation} />
-          <ButtonDis title={"Print"} onClick={PrintRadiology} />
+          <ButtonDis title={"Print"}  />
           <ButtonDis title={"Refresh"} onClick={refreshData} />
         </div>
       </div>
