@@ -1,0 +1,69 @@
+// normal ranges save in array 
+
+const age = 18Years 5Months 0Days
+
+
+normal ranges = [
+    {EquipmentType: "equipment", gender: 'male', min: 0, max: 0, fromAge: 1, toAge: 365, ageType: Days, normalRanges: (90 - 110)},
+    {EquipmentType: "equipment", gender: 'female', min: 0, max: 0, fromAge: 1, toAge: 365, ageType: Days, normalRanges: (90 - 110)},
+    {EquipmentType: "equipment", gender: 'Male', min: 0, max: 0, fromAge: 12, toAge: 24, ageType: Months, normalRanges: (15 - 16)},
+    {EquipmentType: "equipment", gender: 'female', min: 0, max: 0, fromAge: 12, toAge: 24, ageType: Months, normalRanges: (15 - 16)},
+    {EquipmentType: "equipment", gender: 'male', min: 0, max: 0, fromAge: 2, toAge: 24, ageType: Years, normalRanges: (15 - 26)},
+    {EquipmentType: "equipment", gender: 'female', min: 0, max: 0, fromAge: 2, toAge: 24, ageType: Years, normalRanges: (15 - 26)},
+]
+
+if the given age fall between fromAge to toAge of any object I want that object
+\\\
+
+
+import moment from 'moment';
+
+// Example age
+const givenAge = {
+  years: 10,
+  months: 2,
+  days: 12
+};
+
+// Convert given age to days for comparison
+const totalDays = moment.duration({
+  years: givenAge.years,
+  months: givenAge.months,
+  days: givenAge.days
+}).asDays();
+
+
+/// 8770 days
+
+// Normal ranges array
+const normalRanges = [
+  { EquipmentType: "equipment", gender: 'male', min: 0, max: 0, fromAge: 1, toAge: 365, ageType: 'Days', normalRanges: '90 - 110' },
+  { EquipmentType: "equipment", gender: 'female', min: 0, max: 0, fromAge: 1, toAge: 365, ageType: 'Days', normalRanges: '90 - 110' },
+  { EquipmentType: "equipment", gender: 'Male', min: 0, max: 0, fromAge: 12, toAge: 24, ageType: 'Months', normalRanges: '15 - 16' },
+  { EquipmentType: "equipment", gender: 'female', min: 0, max: 0, fromAge: 12, toAge: 24, ageType: 'Months', normalRanges: '15 - 16' },
+  { EquipmentType: "equipment", gender: 'male', min: 0, max: 0, fromAge: 2, toAge: 24, ageType: 'Years', normalRanges: '15 - 26' },
+  { EquipmentType: "equipment", gender: 'female', min: 0, max: 0, fromAge: 2, toAge: 24, ageType: 'Years', normalRanges: '15 - 26' },
+];
+
+// Function to convert age range to days
+const convertToDays = (age, ageType) => {
+  switch (ageType) {
+    case 'Days':
+      return age;
+    case 'Months':
+      return moment.duration(age, 'months').asDays();
+    case 'Years':
+      return moment.duration(age, 'years').asDays();
+    default:
+      return 0;
+  }
+};
+
+// Find matching range
+const matchingRange = normalRanges.find(range => {
+  const fromAgeInDays = convertToDays(range.fromAge, range.ageType);
+  const toAgeInDays = convertToDays(range.toAge, range.ageType);
+  return totalDays >= fromAgeInDays && totalDays <= toAgeInDays;
+});
+
+console.log("Matching Range:", matchingRange);
