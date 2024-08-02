@@ -9,7 +9,7 @@ const LabelledTextArea = ({ label, placeholder, onChange, value }) => {
         id=""
         rows={"4"}
         cols={"40"}
-        className="border-2 border-black bg-transparent rounded-xl p-2 placeholder:text-gray-900"
+        className="border-2 border-black bg-transparent rounded-xl p-2 placeholder:text-gray-500"
         placeholder={placeholder}
         onChange={onChange}
         value={value}

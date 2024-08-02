@@ -16,6 +16,19 @@ const LabTest = () => {
   const [ageTypeData, setAgeTypeData] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [toggle, setToggle] = useState(false);
+  const [togglePage, setTogglePage] = useState(false);
+  const [testName, setTestName] = useState("");
+  const [department, setDepartment] = useState("");
+  const [category, setCategory] = useState("");
+  const [testType, setTestType] = useState("");
+  const [reportDays, setReportdays] = useState("");
+  const [active, setActive] = useState(false);
+  const [style, setStyle] = useState([
+    { bold: false },
+    { italic: false },
+    { underline: false },
+    { fontsize: "8px" },
+  ]);
   const [rangeInfo, setRangeInfo] = useState([
     {
       equipment: "",
@@ -42,6 +55,8 @@ const LabTest = () => {
       ageType: "",
     },
   ]);
+
+  // contain Page data
   useEffect(() => {
     setDepartmentData([
       { name: "--" },
@@ -68,14 +83,50 @@ const LabTest = () => {
       { name: "Out Source" },
     ]);
     setFontSizeData([
-      { name: "--" },
       { name: "8px" },
       { name: "10px" },
       { name: "12px" },
       { name: "14px" },
       { name: "16px" },
     ]);
+    setPreview([
+      {
+        equipment: "",
+        min: "",
+        max: "",
+        fromAge: "",
+        toAge: "",
+        unit: "",
+        normalRanges: "",
+        gender: "",
+        ageType: "",
+      },
+    ]);
+    setRangeInfo([
+      {
+        equipment: "",
+        min: "",
+        max: "",
+        fromAge: "",
+        toAge: "",
+        unit: "",
+        normalRanges: "",
+        gender: "",
+        ageType: "",
+      },
+    ]);
+    setEquipmentTypeData([{ name: "--" }, { name: "Equipment" }]);
+    setGenderData([{ name: "--" }, { name: "Male" }, { name: "Female" }]);
+    setAgeTypeData([
+      { name: "--" },
+      { name: "Days" },
+      { name: "Months" },
+      { name: "Years" },
+    ]);
+  }, [togglePage]);
 
+  // contain ranges data
+  useEffect(() => {
     setEquipmentTypeData([{ name: "--" }, { name: "Equipment" }]);
     setGenderData([{ name: "--" }, { name: "Male" }, { name: "Female" }]);
     setAgeTypeData([
@@ -85,8 +136,9 @@ const LabTest = () => {
       { name: "Years" },
     ]);
   }, [toggle]);
-
   const emptyRangesInfo = () => {
+    console.log(style[1].italic);
+
     setRangeInfo([
       {
         equipment: "",
@@ -104,18 +156,29 @@ const LabTest = () => {
     setToggle(!toggle);
   };
 
-  const rangeData = [
-    {
-      EquipmentType: "",
-      gender: "",
-      min: 0,
-      max: 0,
-      fromAge: 0,
-      toAge: 0,
-      ageType: "",
-      normalRanges: "",
-    },
-  ];
+  const resetWholePage = () => {
+    setTestName("");
+    setDepartment("");
+    setDepartmentData([]);
+    setCategoryData([]);
+    setCategory("");
+    setTestTypeData([]);
+    setTestType("");
+    setReportdays("");
+    setFontSizeData([]);
+    setEquipmentTypeData([]);
+    setGenderData([]);
+    setAgeTypeData([]);
+    setActive(false);
+    setStyle([
+      { bold: false },
+      { italic: false },
+      { underline: false },
+      { fontsize: "8px" },
+    ]);
+
+    setTogglePage(!togglePage);
+  };
 
   /////
 
@@ -185,10 +248,42 @@ const LabTest = () => {
     }
   };
 
- const removeIndex = (index)=>{
-  const filterData = previewInfo.filter((items, i)=> i !== index)
-  setPreview(filterData)
- }
+  const removeIndex = (index) => {
+    const filterData = previewInfo.filter((items, i) => i !== index);
+    setPreview(filterData);
+  };
+
+  const handleChangeStyle = (e, value) => {
+    if (value === "bold") {
+      setStyle((prevStyle) => {
+        const newStyle = [...prevStyle];
+        newStyle[0].bold = e.target.checked;
+        return newStyle;
+      });
+      return;
+    } else if (value === "italic") {
+      setStyle((prevStyle) => {
+        const newStyle = [...prevStyle];
+        newStyle[1].italic = e.target.checked;
+        return newStyle;
+      });
+      return;
+    } else if (value === "underline") {
+      setStyle((prevStyle) => {
+        const newStyle = [...prevStyle];
+        newStyle[2].underline = e.target.checked;
+        return newStyle;
+      });
+      return;
+    } else {
+      setStyle((prevStyle) => {
+        const newStyle = [...prevStyle];
+        newStyle[3].fontsize = e;
+        return newStyle;
+      });
+      return;
+    }
+  };
   return (
     <div>
       <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
@@ -198,22 +293,77 @@ const LabTest = () => {
           <CenterHeading title={"TEST INFORMATION"} />
 
           <div className="flex items-center flex-col space-y-2 mt-3 md:grid md:grid-cols-3 md:justify-items-center">
-            <LabeledInput label={"Test Name"} />
-            <LabelledDropDown label={"Department"} data={departmentData} />
-            <LabelledDropDown label={"Category"} data={CategoryData} />
-            <LabelledDropDown label={"Test Type"} data={testTypeData} />
-            <LabeledInput label={"Report Days"} type={"Number"} />
-            <LabeledInput label={"Active"} type={"checkbox"} />
+            <LabeledInput
+              label={"Test Name"}
+              onChange={(e) => setTestName(e.target.value)}
+              value={testName}
+              placeholder={"Test Name"}
+            />
+            <LabelledDropDown
+              label={"Department"}
+              data={departmentData}
+              onChange={(e) => setDepartment(e)}
+            />
+            <LabelledDropDown
+              label={"Category"}
+              data={CategoryData}
+              onChange={(e) => setCategory(e)}
+            />
+            <LabelledDropDown
+              label={"Test Type"}
+              data={testTypeData}
+              onChange={(e) => setTestType(e)}
+            />
+            <LabeledInput
+              label={"Report Days"}
+              type={"Number"}
+              value={reportDays}
+              onChange={(e) => setReportdays(e.target.value)}
+              placeholder={"report Days"}
+            />
+            <LabeledInput
+              label={"Active"}
+              type={"checkbox"}
+              checked={active}
+              onChange={(e) => setActive(e.target.checked)}
+            />
           </div>
         </div>
         <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
           <CenterHeading title={"TEST STYLING"} />
 
           <div className="flex items-center flex-col space-y-2 mt-3 md:grid md:grid-cols-2 md:justify-items-center">
-            <LabeledInput label={"Bold"} type={"checkbox"} />
-            <LabeledInput label={"Italic"} type={"checkbox"} />
-            <LabeledInput label={"Underline"} type={"checkbox"} />
-            <LabelledDropDown label={"Font Size"} data={fontSizeData} />
+            <LabeledInput
+              label={"Bold"}
+              type={"checkbox"}
+              onChange={(e) => {
+                handleChangeStyle(e, "bold");
+              }}
+              checked={style[0].bold}
+            />
+            <LabeledInput
+              label={"Italic"}
+              type={"checkbox"}
+              onChange={(e) => {
+                handleChangeStyle(e, "italic");
+              }}
+              checked={style[1]?.italic}
+            />
+            <LabeledInput
+              label={"Underline"}
+              type={"checkbox"}
+              onChange={(e) => {
+                handleChangeStyle(e, "underline");
+              }}
+              checked={style[2]?.underline}
+            />
+            <LabelledDropDown
+              label={"Font Size"}
+              data={fontSizeData}
+              onChange={(e) => {
+                handleChangeStyle(e, "fontSize");
+              }}
+            />
           </div>
         </div>
 
@@ -248,12 +398,14 @@ const LabTest = () => {
                   onChange={(e) => handleInputChange(e, index, "min")}
                   type={"Number"}
                   value={rangeInfo[0].min}
+                  placeholder={'Min Range'}
                 />
                 <LabeledInput
                   label={"Max"}
                   onChange={(e) => handleInputChange(e, index, "max")}
                   type={"Number"}
                   value={rangeInfo[0].max}
+                  placeholder={"Max Range"}
                 />
               </div>
 
@@ -263,11 +415,13 @@ const LabTest = () => {
                   onChange={(e) => handleInputChange(e, index, "fromAge")}
                   type={"Number"}
                   value={rangeInfo[0].fromAge}
+                  placeholder={"From Age"}
                 />
                 <LabeledInput
                   label={"To Age"}
                   onChange={(e) => handleInputChange(e, index, "toAge")}
                   type={"Number"}
+                  placeholder={"To Age"}
                   value={rangeInfo[0].toAge}
                 />
                 <LabelledDropDown
@@ -288,11 +442,13 @@ const LabTest = () => {
                   label={"Unit"}
                   onChange={(e) => handleInputChange(e, index, "unit")}
                   value={rangeInfo[0].unit}
+                  placeholder={"Unit"}
                 />
                 <LabelledTextArea
                   label={"Normal Ranges"}
                   onChange={(e) => handleInputChange(e, index, "normalRanges")}
                   value={rangeInfo[0].normalRanges}
+                  placeholder={"Normal Ranges"}
                 />
               </div>
               <div className="flex justify-center mt-3 space-x-3">
@@ -352,6 +508,10 @@ const LabTest = () => {
               )}
           </div>
         )}
+      </div>
+      <div className="flex justify-center space-x-3 mt-3">
+        <ButtonDis title={"Save"} />
+        <ButtonDis title={"Refresh"} onClick={resetWholePage} />
       </div>
     </div>
   );
