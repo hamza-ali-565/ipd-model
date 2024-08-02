@@ -11,7 +11,11 @@ const LabTest = () => {
   const [CategoryData, setCategoryData] = useState([]);
   const [testTypeData, setTestTypeData] = useState([]);
   const [fontSizeData, setFontSizeData] = useState([]);
+  const [equipmentTypeData, setEquipmentTypeData] = useState([]);
+  const [genderData, setGenderData] = useState([]);
+  const [ageTypeData, setAgeTypeData] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
+  const [toggle, setToggle] = useState(false);
   const [rangeInfo, setRangeInfo] = useState([
     {
       equipment: "",
@@ -71,7 +75,34 @@ const LabTest = () => {
       { name: "14px" },
       { name: "16px" },
     ]);
-  }, []);
+
+    setEquipmentTypeData([{ name: "--" }, { name: "Equipment" }]);
+    setGenderData([{ name: "--" }, { name: "Male" }, { name: "Female" }]);
+    setAgeTypeData([
+      { name: "--" },
+      { name: "Days" },
+      { name: "Months" },
+      { name: "Years" },
+    ]);
+  }, [toggle]);
+
+  const emptyRangesInfo = () => {
+    setRangeInfo([
+      {
+        equipment: "",
+        min: "",
+        max: "",
+        fromAge: "",
+        toAge: "",
+        unit: "",
+        normalRanges: "",
+      },
+    ]);
+    setEquipmentTypeData([]);
+    setGenderData([]);
+    setAgeTypeData([]);
+    setToggle(!toggle);
+  };
 
   const rangeData = [
     {
@@ -221,7 +252,7 @@ const LabTest = () => {
               <div className="flex items-center flex-col space-y-2 mt-3 md:grid md:grid-cols-2 md:justify-items-center">
                 <LabelledDropDown
                   label={"Equipment Type"}
-                  data={fontSizeData}
+                  data={equipmentTypeData}
                   onChange={(selectedOption) =>
                     handleInputChange(
                       selectedOption,
@@ -233,7 +264,7 @@ const LabTest = () => {
                 />
                 <LabelledDropDown
                   label={"Gender"}
-                  data={fontSizeData}
+                  data={genderData}
                   onChange={(selectedOption) =>
                     handleInputChange(selectedOption, index, "gender", "select")
                   }
@@ -243,10 +274,14 @@ const LabTest = () => {
                 <LabeledInput
                   label={"Min"}
                   onChange={(e) => handleInputChange(e, index, "min")}
+                  type={"Number"}
+                  value={rangeInfo[0].min}
                 />
                 <LabeledInput
                   label={"Max"}
                   onChange={(e) => handleInputChange(e, index, "max")}
+                  type={"Number"}
+                  value={rangeInfo[0].max}
                 />
               </div>
 
@@ -254,14 +289,18 @@ const LabTest = () => {
                 <LabeledInput
                   label={"From Age"}
                   onChange={(e) => handleInputChange(e, index, "fromAge")}
+                  type={"Number"}
+                  value={rangeInfo[0].fromAge}
                 />
                 <LabeledInput
                   label={"To Age"}
                   onChange={(e) => handleInputChange(e, index, "toAge")}
+                  type={"Number"}
+                  value={rangeInfo[0].toAge}
                 />
                 <LabelledDropDown
                   label={"Age Type"}
-                  data={fontSizeData}
+                  data={ageTypeData}
                   onChange={(selectedOption) =>
                     handleInputChange(
                       selectedOption,
@@ -276,14 +315,17 @@ const LabTest = () => {
                 <LabelledTextArea
                   label={"Unit"}
                   onChange={(e) => handleInputChange(e, index, "unit")}
+                  value={rangeInfo[0].unit}
                 />
                 <LabelledTextArea
                   label={"Normal Ranges"}
                   onChange={(e) => handleInputChange(e, index, "normalRanges")}
+                  value={rangeInfo[0].normalRanges}
                 />
               </div>
-              <div className="flex justify-center mt-3">
+              <div className="flex justify-center mt-3 space-x-3">
                 <ButtonDis title={"Add"} onClick={prev} />
+                <ButtonDis title={"Reset"} onClick={emptyRangesInfo} />
               </div>
             </div>
           ))}
@@ -297,7 +339,7 @@ const LabTest = () => {
         {previewInfo && (
           <div>
             <div className="container mx-auto mt-3">
-              <div className="mt-3 grid grid-cols-11 text-xs font-bold justify-items-center items-center h-16 border border-gray-300">
+              <div className="mt-3 grid grid-cols-10 text-xs font-bold justify-items-center items-center h-16 border border-gray-300">
                 <p>Equipment</p>
                 <p>Gender</p>
                 <p>Min</p>
@@ -307,7 +349,6 @@ const LabTest = () => {
                 <p>To Age</p>
                 <p>Age Type</p>
                 <p>Normal Ranges</p>
-                <p>Update</p>
                 <p>Remove</p>
               </div>
             </div>
@@ -317,7 +358,7 @@ const LabTest = () => {
                 (items, i) =>
                   items.equipment && (
                     <div className="container mx-auto mt-3">
-                      <div className="mt-3 grid grid-cols-11 text-xs justify-items-center items-center h-10 border border-gray-300">
+                      <div className="mt-3 grid grid-cols-10 text-xs justify-items-center items-center h-10 border border-gray-300">
                         {items.equipment}
                         <p>{items.gender}</p>
                         <p>{items.min}</p>
@@ -327,8 +368,9 @@ const LabTest = () => {
                         <p>{items.toAge}</p>
                         <p>{items.ageType}</p>
                         <p>{items.normalRanges.length > 0 ? "True" : "-"}</p>
-                        <p>Update</p>
-                        <p>Remove</p>
+                        <p className="text-red-500 cursor-pointer font-bold hover:underline hover:text-red-700 ">
+                          Remove
+                        </p>
                       </div>
                     </div>
                   )
