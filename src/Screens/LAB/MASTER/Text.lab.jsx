@@ -5,6 +5,11 @@ import LabelledDropDown from "../../../Components/LabelledDropDown/LabelledDropD
 import LabelledTextArea from "../../../Components/LabeledTextArea/LabelledTextArea";
 import moment from "moment";
 import ButtonDis from "../../../Components/Button/ButtonDis";
+import axios from "axios";
+import { ErrorAlert, SuccessAlert } from "../../../Components/Alert/Alert";
+import Loader from "../../../Components/Modal/Loader";
+import { useSelector } from "react-redux";
+import LabTestModal from "../../../Components/Modal/LabTestModal";
 
 const LabTest = () => {
   const [departmentData, setDepartmentData] = useState([]);
@@ -23,6 +28,7 @@ const LabTest = () => {
   const [testType, setTestType] = useState("");
   const [reportDays, setReportdays] = useState("");
   const [active, setActive] = useState(false);
+  const [open, setOpen] = useState(false);
   const [style, setStyle] = useState([
     { bold: false },
     { italic: false },
@@ -55,6 +61,8 @@ const LabTest = () => {
       ageType: "",
     },
   ]);
+
+  const url = useSelector((item) => item?.url);
 
   // contain Page data
   useEffect(() => {
@@ -184,7 +192,6 @@ const LabTest = () => {
 
   const handleInputChange = (e, index, field, type) => {
     setErrorMessage("");
-    console.log(e);
     let value;
     if (type === "select") {
       // Handle the case when the input is a dropdown/select
@@ -218,8 +225,11 @@ const LabTest = () => {
       }
     }
     // age Greaters Check
-    if (toAge < fromAge) {
-      setErrorMessage("From Age must be less than or equal To Age.");
+    if (+fromAge > +toAge) {
+//        '4'        '16'
+
+      console.log({ "from age": fromAge, toAge: toAge });
+      setErrorMessage("From Age must be less than or equal to To Age.");
       return;
     } else if (fromAge <= 0 || toAge <= 0) {
       setErrorMessage("From Age And To Age Must be greater than 1.");
@@ -235,7 +245,6 @@ const LabTest = () => {
     );
 
     if (duplicate) {
-      // Display your error message or take necessary action
       console.error("Duplicate entry found!");
       setErrorMessage("Gender With Same Age Group not Allowed Twise!");
       return;
@@ -284,10 +293,40 @@ const LabTest = () => {
       return;
     }
   };
+
+  // submit test creation api
+  const createLabTest = async () => {
+    setOpen(true);
+    try {
+      const response = await axios.post(
+        `${url}/lab/test`,
+        {
+          testName,
+          department,
+          category,
+          testType,
+          reportDays,
+          active,
+          style,
+          testRanges: previewInfo,
+        },
+        { withCredentials: true }
+      );
+      console.log("response of create lab test ", response);
+      setOpen(false);
+      SuccessAlert({ text: "LAB CREATED SUCCESSFULLY", timer: 2000 });
+      resetWholePage()
+    } catch (error) {
+      console.log("Error of createLabTest ", error);
+      ErrorAlert({ text: error?.message, timer: 2000 });
+      setOpen(false);
+    }
+  };
   return (
     <div>
       <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
         <CenterHeading title={"Lab Test Creation"} />
+        <LabTestModal title={"Update Lab Tests"}/>
 
         <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
           <CenterHeading title={"TEST INFORMATION"} />
@@ -295,7 +334,7 @@ const LabTest = () => {
           <div className="flex items-center flex-col space-y-2 mt-3 md:grid md:grid-cols-3 md:justify-items-center">
             <LabeledInput
               label={"Test Name"}
-              onChange={(e) => setTestName(e.target.value)}
+              onChange={(e) => setTestName(e.target.value.toUpperCase())}
               value={testName}
               placeholder={"Test Name"}
             />
@@ -398,7 +437,7 @@ const LabTest = () => {
                   onChange={(e) => handleInputChange(e, index, "min")}
                   type={"Number"}
                   value={rangeInfo[0].min}
-                  placeholder={'Min Range'}
+                  placeholder={"Min Range"}
                 />
                 <LabeledInput
                   label={"Max"}
@@ -510,9 +549,10 @@ const LabTest = () => {
         )}
       </div>
       <div className="flex justify-center space-x-3 mt-3">
-        <ButtonDis title={"Save"} />
+        <ButtonDis title={"Save"} onClick={createLabTest} />
         <ButtonDis title={"Refresh"} onClick={resetWholePage} />
       </div>
+      <Loader onClick={open} title={"Please Wait ..."} />
     </div>
   );
 };
