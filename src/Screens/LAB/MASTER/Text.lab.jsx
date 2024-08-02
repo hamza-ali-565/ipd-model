@@ -29,6 +29,7 @@ const LabTest = () => {
   const [reportDays, setReportdays] = useState("");
   const [active, setActive] = useState(false);
   const [open, setOpen] = useState(false);
+  const [labData, setLabData] = useState(null);
   const [style, setStyle] = useState([
     { bold: false },
     { italic: false },
@@ -145,7 +146,7 @@ const LabTest = () => {
     ]);
   }, [toggle]);
   const emptyRangesInfo = () => {
-    console.log(style[1].italic);
+    console.log(previewInfo);
 
     setRangeInfo([
       {
@@ -184,7 +185,7 @@ const LabTest = () => {
       { underline: false },
       { fontsize: "8px" },
     ]);
-
+    setLabData(null);
     setTogglePage(!togglePage);
   };
 
@@ -226,7 +227,7 @@ const LabTest = () => {
     }
     // age Greaters Check
     if (+fromAge > +toAge) {
-//        '4'        '16'
+      //        '4'        '16'
 
       console.log({ "from age": fromAge, toAge: toAge });
       setErrorMessage("From Age must be less than or equal to To Age.");
@@ -294,7 +295,26 @@ const LabTest = () => {
     }
   };
 
-  // submit test creation api
+  const testRanges = [
+    { equipment: "Equipment", min: "1" },
+    { equipment: "Equipment", min: "2" },
+    { equipment: "Equipment", min: "3" },
+  ];
+  const updateLabData = (data) => {
+    setLabData(data);
+    console.log("data", data);
+    setTestName(data?.testName);
+    setDepartment(data?.department);
+    setCategory(data?.category);
+    setTestType(data?.testType);
+
+    setReportdays(data?.reportDays);
+    setActive(data?.active);
+    setStyle(data.style);
+    setPreview([...previewInfo, ...data?.testRanges]);
+  };
+
+  // submit test creation/updation api
   const createLabTest = async () => {
     setOpen(true);
     try {
@@ -309,13 +329,14 @@ const LabTest = () => {
           active,
           style,
           testRanges: previewInfo,
+          _id: (labData && labData?._id) || "",
         },
         { withCredentials: true }
       );
       console.log("response of create lab test ", response);
       setOpen(false);
-      SuccessAlert({ text: "LAB CREATED SUCCESSFULLY", timer: 2000 });
-      resetWholePage()
+      SuccessAlert({ text: "LAB CREATED / UPDATED SUCCESSFULLY", timer: 2000 });
+      resetWholePage();
     } catch (error) {
       console.log("Error of createLabTest ", error);
       ErrorAlert({ text: error?.message, timer: 2000 });
@@ -326,7 +347,9 @@ const LabTest = () => {
     <div>
       <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
         <CenterHeading title={"Lab Test Creation"} />
-        <LabTestModal title={"Update Lab Tests"}/>
+        <div className="flex justify-center my-3">
+          <LabTestModal title={"Update Lab Tests"} onClick={updateLabData} />
+        </div>
 
         <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
           <CenterHeading title={"TEST INFORMATION"} />
@@ -367,6 +390,13 @@ const LabTest = () => {
               onChange={(e) => setActive(e.target.checked)}
             />
           </div>
+            {labData && (
+              <div className="flex justify-around mt-3">
+                <div><span className="font-bold">Test type</span>: {labData?.testType}</div>
+                <div><span className="font-bold">Department</span>: {labData?.department}</div>
+                <div><span className="font-bold">Category</span>: {labData?.category}</div>
+              </div>
+            )}
         </div>
         <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
           <CenterHeading title={"TEST STYLING"} />
