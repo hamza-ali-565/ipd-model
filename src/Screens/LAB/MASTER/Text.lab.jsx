@@ -157,8 +157,10 @@ const LabTest = () => {
     // age Greaters Check
     if (toAge < fromAge) {
       setErrorMessage("From Age must be less than or equal To Age.");
+      return;
     } else if (fromAge <= 0 || toAge <= 0) {
       setErrorMessage("From Age And To Age Must be greater than 1.");
+      return;
     }
     // duplicate Check
     const duplicate = previewInfo.some(
@@ -183,40 +185,10 @@ const LabTest = () => {
     }
   };
 
-  //   const empty = () => {
-  //     setRangeInfo([
-  //       {
-  //         equipment: "",
-  //         min: "",
-  //         max: "",
-  //         fromAge: "",
-  //         toAge: "",
-  //         unit: "",
-  //         normalRanges: "",
-  //       },
-  //     ]);
-  //     setReportDays("");
-  //     setCategory("");
-  //     setDepartment("");
-  //     setTestName("");
-  //     setTestType("");
-  //     setPreview([
-  //       {
-  //         equipment: "",
-  //         min: "",
-  //         max: "",
-  //         fromAge: "",
-  //         toAge: "",
-  //         unit: "",
-  //         normalRanges: "",
-  //         gender: "",
-  //         ageType: "",
-  //       },
-  //     ]);
-  //   };
-
-  /////
-
+ const removeIndex = (index)=>{
+  const filterData = previewInfo.filter((items, i)=> i !== index)
+  setPreview(filterData)
+ }
   return (
     <div>
       <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
@@ -367,8 +339,11 @@ const LabTest = () => {
                         <p>{items.fromAge}</p>
                         <p>{items.toAge}</p>
                         <p>{items.ageType}</p>
-                        <p>{items.normalRanges.length > 0 ? "True" : "-"}</p>
-                        <p className="text-red-500 cursor-pointer font-bold hover:underline hover:text-red-700 ">
+                        <p>{items.normalRanges.length > 0 ? "True" : "nill"}</p>
+                        <p
+                          className="text-red-500 cursor-pointer font-bold hover:underline hover:text-red-700 "
+                          onClick={() => removeIndex(i)}
+                        >
                           Remove
                         </p>
                       </div>
