@@ -99,8 +99,10 @@ const LabGroup = () => {
   };
 
   const resetGroupParams = () => {
+    console.log("groupFormat", groupParams);
+
     setSelectedTest(null);
-    // setFontSizeData([]);
+    setFontSizeData([]);
     setGroupFormat([
       {
         serialNo: "",
@@ -113,14 +115,22 @@ const LabGroup = () => {
         fontSize: "8px",
       },
     ]);
-    setFontSizeData([
-      { name: "8px" },
-      { name: "10px" },
-      { name: "12px" },
-      { name: "14px" },
-      { name: "16px" },
-    ]);
-    setTogglePage(!togglePage)
+    // setFontSizeData([
+    //   { name: "8px" },
+    //   { name: "10px" },
+    //   { name: "12px" },
+    //   { name: "14px" },
+    //   { name: "16px" },
+    // ]);
+    setTogglePage(!togglePage);
+  };
+
+  const addToGroupParams = () => {
+    if (groupParams.length <= 0) {
+      setGroupParams(groupFormat);
+      return;
+    }
+    setGroupParams((prevGroupParams) => [...prevGroupParams, ...groupFormat]);
   };
 
   return (
@@ -201,7 +211,7 @@ const LabGroup = () => {
         </div>
 
         <div className="flex justify-center space-x-3 mt-3">
-          <ButtonDis title={"ADD"} />
+          <ButtonDis title={"ADD"} onClick={addToGroupParams} />
           <ButtonDis
             title={"Reset"}
             onClick={() => {
@@ -211,6 +221,38 @@ const LabGroup = () => {
           />
         </div>
       </div>
+      {groupParams.length > 0 && (
+        <div>
+          <div className="container mx-auto mt-3">
+            <div className="mt-3 grid grid-cols-9 text-xs font-bold justify-items-center items-center h-16 border border-gray-300">
+              <p>Serial No</p>
+              <p>Test Code</p>
+              <p>Test Name</p>
+              <p>Category</p>
+              <p>Bold</p>
+              <p>Italic</p>
+              <p>Underline</p>
+              <p>Font Size</p>
+              <p>Remove</p>
+            </div>
+          </div>
+          {groupParams.map((items, index) => (
+            <div className="container mx-auto mt-1">
+              <div className="mt-1 grid grid-cols-9 text-xs justify-items-center items-center h-10 border border-gray-300">
+                <p>{items?.serialNo}</p>
+                <p>{items?.testCode}</p>
+                <p>{items?.testName}</p>
+                <p>{items?.category}</p>
+                <p>{items?.bold === true ? "true" : "false"}</p>
+                <p>{items?.italic === true ? "true" : "false"}</p>
+                <p>{items?.underline === true ? "true" : "false"}</p>
+                <p>{items?.fontSize}</p>
+                <p className="font-red-500">Remove</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
