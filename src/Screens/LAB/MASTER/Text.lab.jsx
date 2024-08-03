@@ -165,7 +165,8 @@ const LabTest = () => {
     setToggle(!toggle);
   };
 
-  const resetWholePage = () => {
+  const resetWholePage = async () => {
+    console.log("yoy bro");
     setTestName("");
     setDepartment("");
     setDepartmentData([]);
@@ -295,23 +296,16 @@ const LabTest = () => {
     }
   };
 
-  const testRanges = [
-    { equipment: "Equipment", min: "1" },
-    { equipment: "Equipment", min: "2" },
-    { equipment: "Equipment", min: "3" },
-  ];
-  const updateLabData = (data) => {
+  const updateLabData = async (data) => {
     setLabData(data);
-    console.log("data", data);
     setTestName(data?.testName);
     setDepartment(data?.department);
     setCategory(data?.category);
     setTestType(data?.testType);
-
     setReportdays(data?.reportDays);
     setActive(data?.active);
     setStyle(data.style);
-    setPreview([...previewInfo, ...data?.testRanges]);
+    setPreview(data?.testRanges);
   };
 
   // submit test creation/updation api
@@ -390,13 +384,21 @@ const LabTest = () => {
               onChange={(e) => setActive(e.target.checked)}
             />
           </div>
-            {labData && (
-              <div className="flex justify-around mt-3">
-                <div><span className="font-bold">Test type</span>: {labData?.testType}</div>
-                <div><span className="font-bold">Department</span>: {labData?.department}</div>
-                <div><span className="font-bold">Category</span>: {labData?.category}</div>
+          {labData && (
+            <div className="flex justify-around mt-3">
+              <div>
+                <span className="font-bold">Test type</span>:{" "}
+                {labData?.testType}
               </div>
-            )}
+              <div>
+                <span className="font-bold">Department</span>:{" "}
+                {labData?.department}
+              </div>
+              <div>
+                <span className="font-bold">Category</span>: {labData?.category}
+              </div>
+            </div>
+          )}
         </div>
         <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
           <CenterHeading title={"TEST STYLING"} />
