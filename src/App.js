@@ -65,6 +65,7 @@ import OPDRegistraion from "./Screens/OPD/Transaction/OPDRegistraion";
 import OPDRefund from "./Screens/OPD/Transaction/OPDRefund";
 import LabTest from "./Screens/LAB/MASTER/Test.lab";
 import MasterFileLab from "./Screens/LAB/MASTER/Master.file.lab";
+import LabGroup from "./Screens/LAB/MASTER/Group.lab";
 
 
 function App() {
@@ -245,7 +246,7 @@ function App() {
               <Route index element={<Port />} />
               <Route path="lab/master*" element={<MasterFileLab />}>
                 <Route path="test" element={<LabTest/>} />
-                <Route path="consultantschedule" element={<ConsultantSchedule/>} />
+                <Route path="group" element={<LabGroup/>} />
               </Route>
               <Route path="lab/transaction/*" element={<TransactionMasterOPD />}>
                 <Route path="opdregistration" element={<OPDRegistraion />} />

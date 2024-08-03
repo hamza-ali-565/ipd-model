@@ -20,7 +20,7 @@ const style = {
   overflowY: "auto", // Enable vertical scrolling
 };
 
-export default function LabTestModal({ onClick, title }) {
+export default function LabTestModal({ onClick, title, thisIs }) {
   const [open, setOpen] = useState(false);
   const [data, setData] = useState([]);
   const [toggle, setToggle] = useState(false);
@@ -61,7 +61,7 @@ export default function LabTestModal({ onClick, title }) {
   // api
   const getData = async () => {
     try {
-      const response = await axios.get(`${url}/lab/tests`, {
+      const response = await axios.get(`${url}/lab/tests?thisIs=${thisIs}`, {
         withCredentials: true,
       });
       console.log(response?.data?.data?.data);
@@ -103,7 +103,7 @@ export default function LabTestModal({ onClick, title }) {
               <p className="">Test Code</p>
               <p className="">Test Name</p>
               <p className="">Department</p>
-              <p className="">Test Type</p>
+              <p className="">Category</p>
               <p className="">Status</p>
             </div>
           </div>
@@ -120,7 +120,7 @@ export default function LabTestModal({ onClick, title }) {
                     <p className="">{item?.testCode}</p>
                     <p className="">{item?.testName}</p>
                     <p className="">{item?.department}</p>
-                    <p className="">{item?.testType}</p>
+                    <p className="">{item?.category}</p>
                     <p className="">
                       {item?.active === true ? "Active" : "In-Active"}
                     </p>

@@ -342,7 +342,7 @@ const LabTest = () => {
       <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
         <CenterHeading title={"Lab Test Creation"} />
         <div className="flex justify-center my-3">
-          <LabTestModal title={"Update Lab Tests"} onClick={updateLabData} />
+          <LabTestModal title={"Update Lab Tests"} onClick={updateLabData} thisIs="Test" />
         </div>
 
         <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
