@@ -63,7 +63,7 @@ import ConsultantSchedule from "./Screens/OPD/Master/ConsultantSchedule";
 import TransactionMasterOPD from "./Screens/OPD/Transaction/TransactionMasterOPD";
 import OPDRegistraion from "./Screens/OPD/Transaction/OPDRegistraion";
 import OPDRefund from "./Screens/OPD/Transaction/OPDRefund";
-import LabTest from "./Screens/LAB/MASTER/Text.lab";
+import LabTest from "./Screens/LAB/MASTER/Test.lab";
 import MasterFileLab from "./Screens/LAB/MASTER/Master.file.lab";
 
 
