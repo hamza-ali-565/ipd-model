@@ -13,6 +13,7 @@ const LabGroup = () => {
   const [department, setDepartment] = useState("");
   const [groupParams, setGroupParams] = useState([]);
   const [selectedTest, setSelectedTest] = useState(null);
+  const [message, setMessage] = useState("");
   const [groupFormat, setGroupFormat] = useState([
     {
       serialNo: "",
@@ -55,6 +56,7 @@ const LabGroup = () => {
   const pushDataToSelectedArray = (data) => {
     setSelectedTest(data);
     groupDataCreation(data);
+    setMessage('')
   };
   const groupDataCreation = (data, value) => {
     let newFormat;
@@ -126,6 +128,17 @@ const LabGroup = () => {
   };
 
   const addToGroupParams = () => {
+    if (groupFormat[0].testName === "") {
+      setMessage("Please Select Test First !!!");
+      return;
+    }
+    const prevReview = groupParams.map(
+      (items) => items?.testCode === groupFormat[0].testCode
+    );
+    if (prevReview.length > 0) {
+      setMessage("Test Already Exist");
+      return;
+    }
     if (groupParams.length <= 0) {
       setGroupParams(groupFormat);
       return;
@@ -220,6 +233,9 @@ const LabGroup = () => {
             }}
           />
         </div>
+        {message && (
+          <p className="text-center font-bold text-red-600">{message}</p>
+        )}
       </div>
       {groupParams.length > 0 && (
         <div>
