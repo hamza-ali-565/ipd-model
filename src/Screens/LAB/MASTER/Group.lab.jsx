@@ -6,11 +6,15 @@ import LabelledDropDown from "../../../Components/LabelledDropDown/LabelledDropD
 import ButtonDis from "../../../Components/Button/ButtonDis";
 
 const LabGroup = () => {
+  const [groupName, setGroupName] = useState("");
+  const [department, setDepartment] = useState("");
+  const [testType, setTestType] = useState("");
+  const [reportDays, setReportDays] = useState("");
+  const [active, setActive] = useState(false);
   const [departmentData, setDepartmentData] = useState([]);
   const [testTypeData, setTestTypeData] = useState([]);
   const [fontSizeData, setFontSizeData] = useState([]);
   const [togglePage, setTogglePage] = useState(false);
-  const [department, setDepartment] = useState("");
   const [groupParams, setGroupParams] = useState([]);
   const [selectedTest, setSelectedTest] = useState(null);
   const [message, setMessage] = useState("");
@@ -53,11 +57,14 @@ const LabGroup = () => {
       { name: "16px" },
     ]);
   }, [togglePage]);
+
   const pushDataToSelectedArray = (data) => {
     setSelectedTest(data);
     groupDataCreation(data);
-    setMessage('')
+    setMessage("");
   };
+
+  // add group info
   const groupDataCreation = (data, value) => {
     let newFormat;
     if (value === "bold") {
@@ -97,13 +104,16 @@ const LabGroup = () => {
         newFormat[0].category = data?.category;
         return newFormat;
       });
+      return;
     }
   };
 
-  const resetGroupParams = () => {
-    console.log("groupFormat", groupParams);
+  // reset selected test
+  const resetGroupFormat = () => {
+    console.log(groupParams);
 
     setSelectedTest(null);
+    setMessage("");
     setFontSizeData([]);
     setGroupFormat([
       {
@@ -117,50 +127,84 @@ const LabGroup = () => {
         fontSize: "8px",
       },
     ]);
-    // setFontSizeData([
-    //   { name: "8px" },
-    //   { name: "10px" },
-    //   { name: "12px" },
-    //   { name: "14px" },
-    //   { name: "16px" },
-    // ]);
     setTogglePage(!togglePage);
   };
 
+  // reset whole page
+  const resetWholePage = () => {
+    setGroupName("");
+    setDepartment("");
+    setTestType("");
+    setReportDays("");
+    setDepartmentData([]);
+    setTestTypeData([]);
+    setGroupParams([]);
+    setActive(false);
+    resetGroupFormat();
+  };
+  // add group param
   const addToGroupParams = () => {
     if (groupFormat[0].testName === "") {
       setMessage("Please Select Test First !!!");
       return;
     }
-    const prevReview = groupParams.map(
-      (items) => items?.testCode === groupFormat[0].testCode
+
+    const prevDetails = groupParams.filter(
+      (items) => groupFormat[0].testCode === items?.testCode
     );
-    if (prevReview.length > 0) {
+    if (prevDetails.length > 0) {
       setMessage("Test Already Exist");
+      resetGroupFormat();
       return;
     }
     if (groupParams.length <= 0) {
       setGroupParams(groupFormat);
+      resetGroupFormat();
       return;
     }
     setGroupParams((prevGroupParams) => [...prevGroupParams, ...groupFormat]);
+    resetGroupFormat();
   };
 
+  // remove object from group params
+  const clearIndex = (itemIndex) => {
+    const filterData = groupParams.filter((_, index) => index !== itemIndex);
+    setGroupParams(filterData);
+  };
   return (
     <div>
       <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
         <CenterHeading title={"Lab Group Creation"} />
         <div className="flex flex-col items-center space-y-2 mt-2 md:grid md:grid-cols-3 md:justify-items-center md:gap-y-2">
-          <LabTestModal title={"Update Lab"} thisIs={"Group"} />
-          <LabeledInput label={"Group Name"} placeholder={"Group Name"} />
+          <LabTestModal title={"Update Group"} thisIs={"Group"} />
+          <LabeledInput
+            label={"Group Name"}
+            placeholder={"Group Name"}
+            onChange={(e) => setGroupName(e.target.value.toUpperCase())}
+            value={groupName}
+          />
           <LabelledDropDown
             label={"Department"}
             data={departmentData}
             onChange={(name) => setDepartment(name)}
           />
-          <LabelledDropDown label={"Test Type"} data={testTypeData} />
-          <LabeledInput label={"Report Days"} placeholder={"Report Days"} />
-          <LabeledInput label={"Active"} type={"Checkbox"} />
+          <LabelledDropDown
+            label={"Test Type"}
+            data={testTypeData}
+            onChange={(name) => setTestType(name)}
+          />
+          <LabeledInput
+            label={"Report Days"}
+            placeholder={"Report Days"}
+            value={reportDays}
+            onChange={(e) => setReportDays(e.target.value)}
+          />
+          <LabeledInput
+            label={"Active"}
+            type={"Checkbox"}
+            checked={active}
+            onChange={(e) => setActive(e.target.checked)}
+          />
         </div>
       </div>
       <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
@@ -228,7 +272,7 @@ const LabGroup = () => {
           <ButtonDis
             title={"Reset"}
             onClick={() => {
-              resetGroupParams();
+              resetGroupFormat();
               console.log(groupFormat);
             }}
           />
@@ -253,7 +297,7 @@ const LabGroup = () => {
             </div>
           </div>
           {groupParams.map((items, index) => (
-            <div className="container mx-auto mt-1">
+            <div className="container mx-auto mt-1" key={index}>
               <div className="mt-1 grid grid-cols-9 text-xs justify-items-center items-center h-10 border border-gray-300">
                 <p>{items?.serialNo}</p>
                 <p>{items?.testCode}</p>
@@ -263,12 +307,21 @@ const LabGroup = () => {
                 <p>{items?.italic === true ? "true" : "false"}</p>
                 <p>{items?.underline === true ? "true" : "false"}</p>
                 <p>{items?.fontSize}</p>
-                <p className="font-red-500">Remove</p>
+                <p
+                  className="text-red-500 font-bold cursor-pointer hover:text-red-700 hover:underline"
+                  onClick={() => clearIndex(index)}
+                >
+                  Remove
+                </p>
               </div>
             </div>
           ))}
         </div>
       )}
+      <div className="flex justify-center space-x-3 my-4">
+        <ButtonDis title={"Save"} />
+        <ButtonDis title={"Refresh"} onClick={resetWholePage} />
+      </div>
     </div>
   );
 };
