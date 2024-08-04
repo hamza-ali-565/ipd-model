@@ -4,6 +4,10 @@ import LabTestModal from "../../../Components/Modal/LabTestModal";
 import LabeledInput from "../../../Components/LabelledInput/LabeledInput";
 import LabelledDropDown from "../../../Components/LabelledDropDown/LabelledDropDown";
 import ButtonDis from "../../../Components/Button/ButtonDis";
+import axios from "axios";
+import Loader from "../../../Components/Modal/Loader";
+import { ErrorAlert, SuccessAlert } from "../../../Components/Alert/Alert";
+import { useSelector } from "react-redux";
 
 const LabGroup = () => {
   const [groupName, setGroupName] = useState("");
@@ -15,6 +19,7 @@ const LabGroup = () => {
   const [testTypeData, setTestTypeData] = useState([]);
   const [fontSizeData, setFontSizeData] = useState([]);
   const [togglePage, setTogglePage] = useState(false);
+  const [open, setOpen] = useState(false);
   const [groupParams, setGroupParams] = useState([]);
   const [selectedTest, setSelectedTest] = useState(null);
   const [message, setMessage] = useState("");
@@ -23,6 +28,7 @@ const LabGroup = () => {
       serialNo: "",
       testCode: "",
       testName: "",
+      testId: "",
       category: "",
       bold: false,
       italic: false,
@@ -63,7 +69,8 @@ const LabGroup = () => {
     groupDataCreation(data);
     setMessage("");
   };
-
+  // url
+  const url = useSelector((item) => item?.url);
   // add group info
   const groupDataCreation = (data, value) => {
     let newFormat;
@@ -102,6 +109,7 @@ const LabGroup = () => {
         newFormat[0].testName = data?.testName;
         newFormat[0].serialNo = groupParams.length + 1;
         newFormat[0].category = data?.category;
+        newFormat[0].testId = data?._id;
         return newFormat;
       });
       return;
@@ -171,6 +179,38 @@ const LabGroup = () => {
     const filterData = groupParams.filter((_, index) => index !== itemIndex);
     setGroupParams(filterData);
   };
+
+  // submit Data
+  const createGroupTest = async () => {
+    setOpen(true);
+    try {
+      const response = await axios.post(
+        `${url}/lab/test`,
+        {
+          testName: groupName,
+          department,
+          testType,
+          reportDays,
+          active,
+          groupParams,
+          thisIs: "Group",
+        },
+        { withCredentials: true }
+      );
+      console.log("response of create Group test ", response);
+      setOpen(false);
+      SuccessAlert({
+        text: "GROUP CREATED / UPDATED SUCCESSFULLY",
+        timer: 2000,
+      });
+      resetWholePage();
+    } catch (error) {
+      console.log("Error of createLabTest ", error);
+      ErrorAlert({ text: error?.message, timer: 2000 });
+      setOpen(false);
+    }
+  };
+
   return (
     <div>
       <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
@@ -214,6 +254,7 @@ const LabGroup = () => {
             title={"Select Test"}
             thisIs={department}
             onClick={(data) => pushDataToSelectedArray(data)}
+            fGroup={"IAmGroupParam"}
           />
           <LabeledInput
             label={"Test Code"}
@@ -319,9 +360,10 @@ const LabGroup = () => {
         </div>
       )}
       <div className="flex justify-center space-x-3 my-4">
-        <ButtonDis title={"Save"} />
+        <ButtonDis title={"Save"} onClick={createGroupTest} />
         <ButtonDis title={"Refresh"} onClick={resetWholePage} />
       </div>
+      <Loader onClick={open} title={"Please Wait ..."} />
     </div>
   );
 };
