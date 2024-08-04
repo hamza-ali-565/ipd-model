@@ -7,6 +7,7 @@ const MasterFileLab = () => {
     { name: "--" },
     { name: "Test" },
     { name: "Group" },
+    { name: "Laboratory Charges" },
   ];
 
   let navigate = useNavigate();
@@ -19,6 +20,9 @@ const MasterFileLab = () => {
       navigate(path);
     } else if (name === "Group") {
       path = "group"; // Relative path
+      navigate(path);
+    } else if (name === "Laboratory Charges") {
+      path = "labcharges"; // Relative path
       navigate(path);
     } 
   };
