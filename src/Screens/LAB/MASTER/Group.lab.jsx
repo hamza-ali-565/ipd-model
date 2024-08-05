@@ -252,9 +252,9 @@ const LabGroup = () => {
         <div className="flex flex-col items-center space-y-2 mt-2 md:grid md:grid-cols-3 md:justify-items-center md:gap-y-2">
           <LabTestModal
             title={"Select Test"}
-            thisIs={department}
+            thisIs={'IAmGroupParam'}
             onClick={(data) => pushDataToSelectedArray(data)}
-            fGroup={"IAmGroupParam"}
+            fGroup={department}
           />
           <LabeledInput
             label={"Test Code"}

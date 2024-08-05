@@ -321,9 +321,9 @@ const LabTest = () => {
           testType,
           reportDays,
           active,
+          thisIs: category,
           style,
           testRanges: previewInfo,
-          thisIs: "Test",
           _id: (labData && labData?._id) || "",
         },
         { withCredentials: true }
@@ -359,6 +359,7 @@ const LabTest = () => {
               onChange={(e) => setTestName(e.target.value.toUpperCase())}
               value={testName}
               placeholder={"Test Name"}
+              
             />
             <LabelledDropDown
               label={"Department"}
