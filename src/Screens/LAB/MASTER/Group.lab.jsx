@@ -23,6 +23,7 @@ const LabGroup = () => {
   const [groupParams, setGroupParams] = useState([]);
   const [selectedTest, setSelectedTest] = useState(null);
   const [message, setMessage] = useState("");
+  const [editedData, setEditedData] = useState(null);
   const [groupFormat, setGroupFormat] = useState([
     {
       serialNo: "",
@@ -149,6 +150,7 @@ const LabGroup = () => {
     setGroupParams([]);
     setActive(false);
     resetGroupFormat();
+    setEditedData(null);
   };
   // add group param
   const addToGroupParams = () => {
@@ -180,9 +182,22 @@ const LabGroup = () => {
     setGroupParams(filterData);
   };
 
+  // on click update group model
+  const updateGroup = (data) => {
+    setEditedData(data);
+    setGroupName(data?.testName);
+    setDepartment(data?.department);
+    setTestType(data?.testType);
+    setReportDays(data?.reportDays);
+    setActive(data?.active);
+    setGroupParams(data?.groupParams);
+  };
+
   // submit Data
   const createGroupTest = async () => {
     setOpen(true);
+    console.log("groupParams ", groupParams);
+
     try {
       const response = await axios.post(
         `${url}/lab/test`,
@@ -194,6 +209,7 @@ const LabGroup = () => {
           active,
           groupParams,
           thisIs: "Group",
+          _id: (editedData && editedData?._id) || "",
         },
         { withCredentials: true }
       );
@@ -216,7 +232,11 @@ const LabGroup = () => {
       <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
         <CenterHeading title={"Lab Group Creation"} />
         <div className="flex flex-col items-center space-y-2 mt-2 md:grid md:grid-cols-3 md:justify-items-center md:gap-y-2">
-          <LabTestModal title={"Update Group"} thisIs={"Group"} />
+          <LabTestModal
+            title={"Update Group"}
+            thisIs={"Group"}
+            onClick={updateGroup}
+          />
           <LabeledInput
             label={"Group Name"}
             placeholder={"Group Name"}
@@ -246,13 +266,25 @@ const LabGroup = () => {
             onChange={(e) => setActive(e.target.checked)}
           />
         </div>
+        {editedData && (
+          <div className="flex justify-center space-x-3 mt-4">
+            <p>
+              <span className="font-bold underline">Department</span>:{" "}
+              {editedData?.department}
+            </p>
+            <p>
+              <span className="font-bold underline">Test Type</span>:{" "}
+              {editedData?.testType}
+            </p>
+          </div>
+        )}
       </div>
       <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
         <CenterHeading title={"Params of Group"} />
         <div className="flex flex-col items-center space-y-2 mt-2 md:grid md:grid-cols-3 md:justify-items-center md:gap-y-2">
           <LabTestModal
             title={"Select Test"}
-            thisIs={'IAmGroupParam'}
+            thisIs={"IAmGroupParam"}
             onClick={(data) => pushDataToSelectedArray(data)}
             fGroup={department}
           />
