@@ -100,27 +100,29 @@ const LabBooking = () => {
     setOpen(true);
     try {
       const response = await axios.post(
-        `${url}/radiologybooking`,
+        `${url}/lab/labBooking`,
         {
           mrNo: mrInfo?.MrNo,
           consultant: consultant?.name,
+          consultantId: consultant?._id,
           party: party?.name,
+          partyId: party?._id,
           amount,
           paymentType,
           location,
           remarks,
           serviceDetails,
-          createdUser: userData[0]?.userId,
           shiftNo: shiftData[0].ShiftNo,
+          labFrom: "OPD"
         },
         { withCredentials: true }
       );
       console.log("Response of submit data", response.data);
       setBookingResponse(response.data);
-      SuccessAlert({ text: "RADIOLOGY CREATED SUCCESSFULLY", timer: 2000 });
+      SuccessAlert({ text: "LAB CREATED SUCCESSFULLY", timer: 2000 });
       refreshData();
       setOpen(false);
-      PrintRadiology(response.data);
+      // PrintRadiology(response.data);
     } catch (error) {
       console.log("Error of Submit Data", error);
       setOpen(false);
