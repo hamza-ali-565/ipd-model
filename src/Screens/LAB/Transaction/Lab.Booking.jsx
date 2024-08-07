@@ -20,6 +20,7 @@ import { pdf } from "@react-pdf/renderer";
 import { v4 as uuidv4 } from "uuid";
 import RadiologyBookingPDF from "../../../Components/PDFDetails/RadiologyBookingPDF";
 import RadioTestModal from "../../../Components/Modal/RadioTestModal";
+import LabTestAndGroup from "../../../Components/Modal/LabTestAndGroups";
 
 const LabBooking = () => {
   const [paymentType, setPaymentType] = useState("");
@@ -191,9 +192,9 @@ const selectParty = (e)=>{
             title={"Select Consultant"}
             onClick={(e) => setConsultant(e)}
           />
-          <RadiologyServiceModal
+          <LabTestAndGroup
             title={"Select Tests"}
-            modalAdmissionNo={party !== null ? party?.name : ""}
+            modalAdmissionNo={party !== null ? party?._id : ""}
             onClick={(e) => SumAmount(e)}
           />
           <RadioTestModal

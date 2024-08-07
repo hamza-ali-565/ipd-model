@@ -5,6 +5,9 @@ import Modal from "@mui/material/Modal";
 import SimpleInput from "../SimpleInput/SimpleInput";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import CenterHeading from "../Center Heading/CenterHeading";
+import ButtonDis from "../Button/ButtonDis";
+import { ErrorAlert, SuccessAlert } from "../Alert/Alert";
 
 const style = {
   position: "absolute",
@@ -20,28 +23,29 @@ const style = {
   overflowY: "auto", // Enable vertical scrolling
 };
 
-export default function LabTestAndGroups({
+export default function LabTestAndGroup({
   onClick,
   title,
-  whatCall,
-  patientType,
+  modalAdmissionNo,
+  patientName,
 }) {
   const [open, setOpen] = useState(false);
   const [data, setData] = useState([]);
   const [toggle, setToggle] = useState(false);
+  const [serviceDetails, setServiceDetails] = useState([]);
   const inputRef = useRef(null); // Reference for the input element
 
   React.useEffect(() => {
-    if (whatCall) {
-      getData1();
-      return;
-    } else {
-      getData();
-    }
+    getData();
   }, [toggle]);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setOpen(false);
+    setData([]);
+    setServiceDetails([]);
+  };
 
   const url = useSelector((state) => state.url);
+  const userData = useSelector((item) => item?.response);
 
   const OpenData = () => {
     setToggle(!toggle);
@@ -65,36 +69,65 @@ export default function LabTestAndGroups({
   };
 
   const SendData = (item) => {
-    onClick(item);
-    handleClose();
+    for (const existingItem of serviceDetails) {
+      if (existingItem?.serviceId === item?.serviceId) {
+        console.log("Item already exists");
+        return;
+      }
+    }
+    item.amount = item.charges;
+    item.quantity = 1;
+    item.createdUser = userData[0]?.userId;
+    setServiceDetails((prevServiceDetails) => [...prevServiceDetails, item]);
+
+    // handleClose();
   };
+
+  const updateSD = (value, data) => {
+    const updatedData = serviceDetails?.map((item) => {
+      if (item.serviceId === data.serviceId) {
+        return {
+          ...item,
+          quantity: +value,
+          amount: value * item?.charges,
+        };
+      }
+      return item;
+    });
+    setServiceDetails(updatedData);
+    console.log(updatedData);
+  };
+
   // api
   const getData = async () => {
     try {
       const response = await axios.get(
-        `${url}/radiologydetails?patientType=${patientType}`,
+        `${url}/lab/labsForBooking?partyId=${modalAdmissionNo}`,
         {
           withCredentials: true,
         }
       );
       console.log(response.data.data);
-      setData(response.data.data);
+      setData(response.data.data.data);
     } catch (error) {
       console.log("error of get data", error);
     }
   };
 
-  const getData1 = async () => {
+  const createService = async () => {
     try {
-      const response = await axios.get(`${url}/admissionall`, {
-        withCredentials: true,
-      });
-      console.log(response.data.data);
-      setData(response.data.data);
+      if (serviceDetails.length <= 0)
+        throw new Error("PLEASE SELECT SERVICE !!!");
+
+      onClick(serviceDetails);
+      console.log("serviceDetails at line 123", serviceDetails);
+      handleClose();
     } catch (error) {
-      console.log("error of get data", error);
+      console.log("Error of createService", error);
+      ErrorAlert({ text: error.message, timer: 2000 });
     }
   };
+
   useEffect(() => {
     if (open && inputRef.current) {
       inputRef.current.focus();
@@ -114,46 +147,110 @@ export default function LabTestAndGroups({
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
+        BackdropProps={{
+          style: { cursor: "default" }, // Change cursor style
+          onClick: (e) => e.stopPropagation(), // Prevent closing on backdrop click
+        }}
       >
         <Box sx={style}>
+          <div className="flex justify-around mb-3">
+            <p>
+              <span className="font-bold ">Party Name:</span> {modalAdmissionNo}
+            </p>
+          </div>
           <div className="flex justify-center">
             <SimpleInput
               ref={inputRef}
-              placeholder={"Input Patient Data"}
+              placeholder={"Search Services . . ."}
               onChange={(e) => filterNames(e.target.value)}
             />
           </div>
-          <div className="container mx-auto mt-3">
-            <div className="grid grid-cols-4 text-xs justify-items-center items-center h-16 border border-gray-300">
-              <p className="">Radiology No.</p>
-              <p className="">Patient Name</p>
-              <p className="">Mr No.</p>
-              <p className="">Cell No.</p>
+          {!modalAdmissionNo && (
+            <div className="flex justify-center text-red-600 mt-2 font-bold">
+              ERROR !!!
+              <span className="px-1 text-blue-600 font-bold">
+                PLEASE SELECT PARTY NAME FIRST{" "}
+              </span>
+              !!! ERROR
             </div>
-          </div>
+          )}
+          {/* main */}
+          <div className="grid grid-cols-2 gap-x-2">
+            {/* service names */}
+            <div>
+              <CenterHeading title={"Services"} />
+              <div className="container mx-auto mt-3">
+                <div className="grid grid-cols-3 text-xs justify-items-center items-center h-16 border border-gray-300">
+                  <p className="">Test Code</p>
+                  <p className="">Test Name</p>
+                  <p className="">Amount</p>
+                </div>
+              </div>
 
-          <div className="max-h-96">
-            {data.length > 0 ? (
-              data.map((item, index) => (
-                <div
-                  className="container mx-auto mt-3 cursor-pointer"
-                  key={index}
-                  onClick={() => SendData(item)}
-                >
-                  <div className="grid grid-cols-4 text-xs justify-items-center items-center h-10 border border-gray-300">
-                    <p className="">{item?.radiologyNo}</p>
-                    <p className="">
-                      {item?.patientType} {item?.patientName}{" "}
-                      {item?.relativeType} {item?.relativeName}
-                    </p>
-                    <p className="">{item?.mrNo}</p>
-                    <p className="">{item?.cellNo}</p>
+              <div className="max-h-96">
+                {data.length > 0 ? (
+                  data.map((item, index) => (
+                    <div
+                      className="container mx-auto mt-3 cursor-pointer"
+                      key={index}
+                      onClick={() => SendData(item)}
+                    >
+                      <div className="grid grid-cols-3 text-xs justify-items-center items-center h-10 border border-gray-300">
+                        <p className="">{item?.testCode}</p>
+                        <p className="">{item?.testName}</p>
+
+                        <p className="">{item?.charges}</p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="flex justify-center">NO Data Loaded...</div>
+                )}
+              </div>
+            </div>
+            {/* service details */}
+            <div>
+              <CenterHeading title={"Service Details"} />
+
+              <div className="container mx-auto mt-3">
+                <div className="grid grid-cols-3 text-xs justify-items-center items-center h-16 border border-gray-300">
+                  <p className="">Service Name</p>
+                  <p className="">No. of Times</p>
+                  <p className="">Amount</p>
+                </div>
+                <div className="container mx-auto mt-3">
+                  {serviceDetails?.length > 0 &&
+                    serviceDetails?.map((items, index) => (
+                      <div className="grid grid-cols-3 text-xs justify-items-center items-center h-10 mt-2 border border-gray-300">
+                        <p className="">{items?.serviceName}</p>
+                        <p className="">
+                          <input
+                            type="number"
+                            className="w-16 border-2 p-1 border-gray-600 rounded-xl"
+                            placeholder="Qty"
+                            value={items?.quantity}
+                            name=""
+                            disabled={true}
+                            id=""
+                            onChange={(e) => updateSD(e.target.value, items)}
+                          />
+                        </p>
+                        <p className="">{items?.amount}</p>
+                      </div>
+                    ))}
+                  <div className="flex justify-center space-x-2 mt-2">
+                    <ButtonDis title={"Add"} onClick={createService} />
+                    <ButtonDis
+                      title={"Refresh"}
+                      onClick={() =>
+                        console.log("service", setServiceDetails([]))
+                      }
+                    />
+                    <ButtonDis title={"Cancel"} onClick={handleClose} />
                   </div>
                 </div>
-              ))
-            ) : (
-              <div className="flex justify-center">NO Data Loaded...</div>
-            )}
+              </div>
+            </div>
           </div>
         </Box>
       </Modal>
