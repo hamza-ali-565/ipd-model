@@ -5,7 +5,7 @@ import axios from "axios";
 import Loader from "../../../Components/Modal/Loader";
 import { useSelector } from "react-redux";
 import ButtonDis from "../../../Components/Button/ButtonDis";
-import { SuccessAlert } from "../../../Components/Alert/Alert";
+import { ErrorAlert, SuccessAlert } from "../../../Components/Alert/Alert";
 
 const LabCharges = () => {
   const [party, setParty] = useState(null);
@@ -53,6 +53,19 @@ const LabCharges = () => {
     setChargesDetails(updateChargesDetails);
   };
 
+  const CheckValidation =  () => {
+    try {
+      if (party === null) {
+        throw new Error("PLEASE SELECT PARTY FIRST !!!");
+      } else if (chargesDetails?.length <= 0) {
+        throw new Error("PLEASE ENTER VALUE IN CHARGES DETAILS !!!");
+      }
+       submitData()
+    } catch (error) {
+      ErrorAlert({ text: error?.message, timer: 2000 });
+    }
+  };
+
   // Submit data
   const submitData = async () => {
     try {
@@ -72,11 +85,12 @@ const LabCharges = () => {
         timer: 1000,
       });
       console.log(response);
-      
+
       reset();
     } catch (error) {
       setOpen(false);
       console.log("Error of submit Data ", error);
+      setChargesDetails([])
     }
   };
 
@@ -142,7 +156,7 @@ const LabCharges = () => {
         )}
       </div>
       <div className="flex flex-col items-center space-y-2 md:flex-row md:space-y-0 md:space-x-2 justify-center">
-        <ButtonDis title={"Save"} onClick={submitData} />
+        <ButtonDis title={"Save"} onClick={CheckValidation} />
         <ButtonDis title={"Refresh"} onClick={reset} />
       </div>
       <Loader onClick={open} title={"Please Wait ..."} />
