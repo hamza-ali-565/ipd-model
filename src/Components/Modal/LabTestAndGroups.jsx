@@ -68,9 +68,11 @@ export default function LabTestAndGroup({
     setData(filteredData);
   };
 
+
+  // push data to array 
   const SendData = (item) => {
     for (const existingItem of serviceDetails) {
-      if (existingItem?.serviceId === item?.serviceId) {
+      if (existingItem?.testId === item?.testId) {
         console.log("Item already exists");
         return;
       }
@@ -222,7 +224,7 @@ export default function LabTestAndGroup({
                   {serviceDetails?.length > 0 &&
                     serviceDetails?.map((items, index) => (
                       <div className="grid grid-cols-3 text-xs justify-items-center items-center h-10 mt-2 border border-gray-300">
-                        <p className="">{items?.serviceName}</p>
+                        <p className="">{items?.testName}</p>
                         <p className="">
                           <input
                             type="number"

@@ -312,7 +312,7 @@ const selectParty = (e)=>{
             <div className="container mx-auto mt-3">
               <div className="grid grid-cols-4 text-xs justify-items-center items-center h-10 border border-gray-300">
                 <p className="">{index + 1}</p>
-                <p className="">{service?.serviceName}</p>
+                <p className="">{service?.testName}</p>
                 <p className="">{service?.quantity}</p>
                 <p className="">{service?.amount}</p>
               </div>
