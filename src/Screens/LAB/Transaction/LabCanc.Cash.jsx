@@ -40,19 +40,19 @@ const LabCancCash = () => {
   };
 
   const deleteTest = async (uniqueId) => {
-    setLoader(true);
     try {
+      setLoader(true);
       const response = await axios.put(
-        `${url}/radiologybooking`,
+        `${url}/lab/labDeletion`,
         {
           uniqueId,
-          deletedUser: userData[0]?.userId,
         },
         { withCredentials: true }
       );
       SuccessAlert({ text: "TEST DELETED SUCCESSFULLY", timer: 1000 });
       setLoader(false);
       getDetails(mrInfo);
+      console.log("Response", response);
     } catch (error) {
       console.log("Error of delete Test", error);
       setLoader(false);
