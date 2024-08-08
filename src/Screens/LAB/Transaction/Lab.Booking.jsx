@@ -21,6 +21,8 @@ import { v4 as uuidv4 } from "uuid";
 import RadiologyBookingPDF from "../../../Components/PDFDetails/RadiologyBookingPDF";
 import RadioTestModal from "../../../Components/Modal/RadioTestModal";
 import LabTestAndGroup from "../../../Components/Modal/LabTestAndGroups";
+import PrevLabModal from "../../../Components/Modal/PrevLabModal";
+import LAbOpdSlip from "../../../Components/PDFDetails/LabOpdSlip";
 
 const LabBooking = () => {
   const [paymentType, setPaymentType] = useState("");
@@ -95,7 +97,7 @@ const LabBooking = () => {
       ErrorAlert({ text: error?.message, timer: 2000 });
     }
   };
-// Submit Lab
+  // Submit Lab
   const submitData = async () => {
     setOpen(true);
     try {
@@ -111,9 +113,10 @@ const LabBooking = () => {
           paymentType,
           location,
           remarks,
-          serviceDetails,
+          labDetails: serviceDetails,
           shiftNo: shiftData[0].ShiftNo,
-          labFrom: "OPD"
+          labFrom: "OPD",
+          _id: "",
         },
         { withCredentials: true }
       );
@@ -122,24 +125,21 @@ const LabBooking = () => {
       SuccessAlert({ text: "LAB CREATED SUCCESSFULLY", timer: 2000 });
       refreshData();
       setOpen(false);
-      // PrintRadiology(response.data);
+      PrintRadiology(response.data?.data);
     } catch (error) {
       console.log("Error of Submit Data", error);
       setOpen(false);
     }
   };
 
-// print lab
+  // print lab
   const PrintRadiology = async (data) => {
-    // if (mrInfo === null) {
-    //   ErrorAlert({ text: "NO DATA TO BE PRINT !!!", timer: 2000 });
-    //   return;
-    // }
+   
     const key = uuidv4();
 
     // Create a PDF document as a Blob
     const blob = await pdf(
-      <RadiologyBookingPDF
+      <LAbOpdSlip
         key={key}
         userName={userData[0]?.userId}
         radioDetails={data}
@@ -152,12 +152,12 @@ const LabBooking = () => {
     url = "";
   };
 
-// get details to print previous lab
+  // get details to print previous lab
   const getDetails = async (name) => {
     setOpen(true);
     try {
       const response = await axios.get(
-        `${url}/radiologypdf?radiologyNo=${name?.radiologyNo}&mrNo=${name?.mrNo}`,
+        `${url}/lab/labBookingForPdf?labNo=${name?.labNo}&mrNo=${name?.mrNo}`,
         { withCredentials: true }
       );
       setOpen(false);
@@ -165,8 +165,7 @@ const LabBooking = () => {
         text: `YOU WANT TO PRINT RADIOLOGY NO ${name?.radiologyNo}`,
       });
       if (ask) {
-        console.log("ok");
-        PrintRadiology(response.data);
+        PrintRadiology(response.data.data);
       } else {
         console.log("User canceled");
         return;
@@ -177,17 +176,16 @@ const LabBooking = () => {
     }
   };
 
-
-const selectParty = (e)=>{
-  setServiceDetails([])
-  setParty(e)
-}
+  const selectParty = (e) => {
+    setServiceDetails([]);
+    setParty(e);
+  };
   return (
     <div>
       <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
         <CenterHeading title={"Radiology Booking"} />
         <div className="flex items-center flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 md:justify-center mt-2">
-          <MRModel title={"Create Mr No"} onClick={(e) => setmrInfo(e)}/>
+          <MRModel title={"Create Mr No"} onClick={(e) => setmrInfo(e)} />
           <BasicModal title={"Select Mr No"} onClick={(e) => setmrInfo(e)} />
           <PartyModal title={"Select Party"} onClick={(e) => selectParty(e)} />
           <ConsultantModal
@@ -199,10 +197,10 @@ const selectParty = (e)=>{
             modalAdmissionNo={party !== null ? party?._id : ""}
             onClick={(e) => SumAmount(e)}
           />
-          <RadioTestModal
-            title={"Select Radiology No."}
+          <PrevLabModal
+            title={"Select Lab No."}
             onClick={getDetails}
-            patientType={"Cash"}
+            labFrom={"OPD"}
           />
         </div>
       </div>
