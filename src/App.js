@@ -69,6 +69,7 @@ import LabGroup from "./Screens/LAB/MASTER/Group.lab";
 import LabCharges from "./Screens/LAB/MASTER/LabCharges";
 import TransactionMasterLab from "./Screens/LAB/Transaction/TransactionMasterLab";
 import LabBooking from "./Screens/LAB/Transaction/Lab.Booking";
+import LabCancCash from "./Screens/LAB/Transaction/LabCanc.Cash";
 
 
 function App() {
@@ -254,7 +255,8 @@ function App() {
               </Route>
               <Route path="lab/transaction/*" element={<TransactionMasterLab />}>
                 <Route path="labregistration" element={<LabBooking />} />
-                <Route path="opdcancellation" element={<OPDRefund />} />
+                <Route path="labcancellationcash" element={<LabCancCash />} />
+                <Route path="labcancellationipd" element={<LabCancCash />} />
               </Route>
               <Route
                 path="setups/consultant/*"

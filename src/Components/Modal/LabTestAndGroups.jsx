@@ -68,8 +68,7 @@ export default function LabTestAndGroup({
     setData(filteredData);
   };
 
-
-  // push data to array 
+  // push data to array
   const SendData = (item) => {
     for (const existingItem of serviceDetails) {
       if (existingItem?.testId === item?.testId) {
@@ -80,6 +79,7 @@ export default function LabTestAndGroup({
     item.amount = item.charges;
     item.quantity = 1;
     item.createdUser = userData[0]?.userId;
+    
     setServiceDetails((prevServiceDetails) => [...prevServiceDetails, item]);
 
     // handleClose();
