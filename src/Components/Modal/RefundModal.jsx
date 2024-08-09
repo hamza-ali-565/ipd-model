@@ -65,7 +65,7 @@ export default function RefundModal({ onClick, title, whatCall }) {
         withCredentials: true,
       });
       console.log(response.data.data);
-      setData(response.data.data);
+      setData(response.data.data.reverse());
     } catch (error) {
       console.log("error of get data", error);
     }
@@ -112,7 +112,7 @@ export default function RefundModal({ onClick, title, whatCall }) {
             {data.length > 0 ? (
               data.map((item, index) => (
                 <div
-                  className="container mx-auto mt-3 cursor-pointer"
+                  className="container mx-auto mt-3 cursor-pointer hover:text-blue-600 hover:font-bold"
                   key={index}
                   onClick={() => SendData(item)}
                 >

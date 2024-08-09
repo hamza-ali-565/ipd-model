@@ -162,7 +162,7 @@ const LabBooking = () => {
       );
       setOpen(false);
       const ask = await AskingAlert({
-        text: `YOU WANT TO PRINT RADIOLOGY NO ${name?.radiologyNo}`,
+        text: `YOU WANT TO PRINT LAB NO ${name?.labNo}`,
       });
       if (ask) {
         PrintRadiology(response.data.data);

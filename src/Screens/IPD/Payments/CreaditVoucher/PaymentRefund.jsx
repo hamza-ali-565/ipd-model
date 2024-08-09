@@ -15,6 +15,7 @@ import { pdf } from "@react-pdf/renderer";
 import { v4 as uuidv4 } from "uuid";
 import RadioRefundModal from "../../../../Components/Modal/RadioRefundModal";
 import OPDModal from "../../../../Components/Modal/OPDModal";
+import PrevLabModal from "../../../../Components/Modal/PrevLabModal";
 
 const PaymentRefund = () => {
   const [paymentType, setPaymentType] = useState("");
@@ -50,6 +51,7 @@ const PaymentRefund = () => {
       { name: "Agaisnt IPD Bill" },
       { name: "Agaisnt ER Bill" },
       { name: "Agaisnt Radiology" },
+      { name: "Against Lab" },
       { name: "Agaisnt OPD" },
     ]);
 
@@ -125,16 +127,15 @@ const PaymentRefund = () => {
       if (!location || location === "--")
         throw new Error("PLEASE SELECT LOCATION !!");
       if (mrInfo === null)
-        throw new Error(
-          `PLEASE SELECT ${
-            paymentAgainst === "Agaisnt Radiology" ? "Radiology No" : "Bill No"
-          } !!`
-        );
-      if (uniqueId.length > 0) {
+        throw new Error(`PLEASE SELECT PATIENT TO BE REFUNDED !!!`);
+      if (paymentAgainst === "Agaisnt Radiology") {
         RadiologyRefund();
         return;
       } else if (paymentAgainst === "Agaisnt OPD") {
         opdRefund();
+        return;
+      } else if (paymentAgainst === "Against Lab") {
+        labRefund();
         return;
       }
       submitRefund();
@@ -297,6 +298,60 @@ const PaymentRefund = () => {
       setOpen(false);
     }
   };
+
+  // getLAb
+  const getLab = async (data) => {
+    try {
+      setMrInfo(data);
+      setOpen(true);
+      const response = await axios.get(
+        `${url}/lab/labRefundAmount?labNo=${data?.labNo}`,
+        { withCredentials: true }
+      );
+      console.log("response of getLab", response.data.data.filterData);
+      setUniqueId(
+        response?.data?.data?.filterData?.map((item) => item?.uniqueId) || []
+      );
+      console.log("uniqueId", uniqueId);
+
+      setAmount(response.data.data.data);
+      setOpen(false);
+    } catch (error) {
+      console.log("Error of get Labs ", error);
+      setOpen(false);
+    }
+  };
+
+  // submittion of lab refund
+  const labRefund = async () => {
+    setOpen(true);
+    try {
+      const response = await axios.put(
+        `${url}/lab/labRefund`,
+        {
+          uniqueId,
+          refundAgainst: paymentAgainst,
+          refundType: paymentType,
+          location,
+          refundAmount: amount,
+          shiftNo: shiftData[0].ShiftNo,
+          againstNo: mrInfo?.labNo,
+          mrNo: mrInfo?.mrNo,
+          remarks,
+        },
+        { withCredentials: true }
+      );
+      console.log("response of radiology refund", response.data.data.data);
+      SuccessAlert({ text: "REFUND CREATED SUCCESSFULLY", timer: 2000 });
+      resetData();
+      setOpen(false);
+      PaymentPrint(response?.data?.data?.data);
+    } catch (error) {
+      console.log("Error of radiology refund", error);
+      ErrorAlert({ text: error.message });
+      setOpen(false);
+    }
+  };
   return (
     <div>
       <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
@@ -329,6 +384,7 @@ const PaymentRefund = () => {
 
           {(paymentAgainst === "Agaisnt IPD Bill" ||
             paymentAgainst === "Agaisnt Radiology" ||
+            paymentAgainst === "Against Lab" ||
             paymentAgainst === "Agaisnt OPD") && (
             <div className="flex items-center flex-col space-y-2">
               {paymentAgainst === "Agaisnt IPD Bill" ? (
@@ -343,6 +399,13 @@ const PaymentRefund = () => {
                 />
               ) : paymentAgainst === "Agaisnt OPD" ? (
                 <OPDModal title={"Select OPD No"} onClick={(e) => getOPD(e)} />
+              ) : paymentAgainst === "Against Lab" ? (
+                <PrevLabModal
+                  title={"Select Lab No."}
+                  onClick={getLab}
+                  labFrom={"OPD"}
+                  whatCall={"RefundData"}
+                />
               ) : (
                 ""
               )}
@@ -362,18 +425,21 @@ const PaymentRefund = () => {
                 placeholder={
                   (paymentAgainst === "Agaisnt IPD Bill" && "Bill No") ||
                   (paymentAgainst === "Agaisnt Radiology" && "Radiology No") ||
+                  (paymentAgainst === "Against Lab" && "Lab No") ||
                   (paymentAgainst === "Agaisnt OPD" && "OPD No") ||
                   ""
                 }
                 label={
                   (paymentAgainst === "Agaisnt IPD Bill" && "Admission No") ||
                   (paymentAgainst === "Agaisnt Radiology" && "Radiology No") ||
+                  (paymentAgainst === "Against Lab" && "Lab No") ||
                   (paymentAgainst === "Agaisnt OPD" && "OPD No") ||
                   ""
                 }
                 value={
                   (mrInfo?.admissionNo && mrInfo?.admissionNo) ||
                   (mrInfo?.radiologyNo && mrInfo?.radiologyNo) ||
+                  (mrInfo?.labNo && mrInfo?.labNo) ||
                   (mrInfo?.opdNo && mrInfo?.opdNo) ||
                   ""
                 }

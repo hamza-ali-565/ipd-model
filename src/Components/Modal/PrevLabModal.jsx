@@ -20,24 +20,14 @@ const style = {
   overflowY: "auto", // Enable vertical scrolling
 };
 
-export default function PrevLabModal({
-  onClick,
-  title,
-  whatCall,
-  labFrom,
-}) {
+export default function PrevLabModal({ onClick, title, whatCall, labFrom }) {
   const [open, setOpen] = useState(false);
   const [data, setData] = useState([]);
   const [toggle, setToggle] = useState(false);
   const inputRef = useRef(null); // Reference for the input element
 
   React.useEffect(() => {
-    if (whatCall) {
-      getData1();
-      return;
-    } else {
-      getData();
-    }
+    getData();
   }, [toggle]);
   const handleClose = () => setOpen(false);
 
@@ -72,7 +62,9 @@ export default function PrevLabModal({
   const getData = async () => {
     try {
       const response = await axios.get(
-        `${url}/lab/labBooking?labFrom=${labFrom}`,
+        `${url}/lab/labBooking?labFrom=${labFrom}&where=${
+          whatCall ? whatCall : ""
+        }`,
         {
           withCredentials: true,
         }
