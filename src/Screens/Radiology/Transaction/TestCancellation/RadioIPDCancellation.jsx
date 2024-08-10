@@ -126,7 +126,7 @@ const RadioIPDCancellation = () => {
         <div className="container mx-auto mt-3">
           <div className="mt-3 grid grid-cols-4 text-xs justify-items-center items-center h-16 border border-gray-300">
             <p>Service Name</p>
-            <p>Charges</p>
+            <p>Consultant</p>
             <p>Amount</p>
             <p>Remove</p>
           </div>
@@ -136,7 +136,7 @@ const RadioIPDCancellation = () => {
             <div className="container mx-auto mt-3" key={index}>
               <div className="mt-3 grid grid-cols-4 text-xs justify-items-center items-center h-10 border border-gray-300">
                 <p>{items?.serviceName}</p>
-                <p>{items?.amount}</p>
+                <p>{items?.consultant}</p>
                 <p>{items?.amount}</p>
                 <p
                   className="font-bold underline cursor-pointer hover:text-red-600"
