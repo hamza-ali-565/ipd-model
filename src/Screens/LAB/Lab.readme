@@ -25,6 +25,8 @@ const givenAge = {
   days: 12
 };
 
+let gender = "Male"
+
 // Convert given age to days for comparison
 const totalDays = moment.duration({
   years: givenAge.years,

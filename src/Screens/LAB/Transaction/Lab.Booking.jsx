@@ -134,7 +134,6 @@ const LabBooking = () => {
 
   // print lab
   const PrintRadiology = async (data) => {
-   
     const key = uuidv4();
 
     // Create a PDF document as a Blob
@@ -183,7 +182,7 @@ const LabBooking = () => {
   return (
     <div>
       <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
-        <CenterHeading title={"Radiology Booking"} />
+        <CenterHeading title={"Lab Booking"} />
         <div className="flex items-center flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2 md:justify-center mt-2">
           <MRModel title={"Create Mr No"} onClick={(e) => setmrInfo(e)} />
           <BasicModal title={"Select Mr No"} onClick={(e) => setmrInfo(e)} />
