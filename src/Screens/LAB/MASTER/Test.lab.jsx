@@ -305,7 +305,7 @@ const LabTest = () => {
     setReportdays(data?.reportDays);
     setActive(data?.active);
     setStyle(data.style);
-    setPreview(data?.testRanges);
+    setPreview(data?.testRanges.length > 0 ? data?.testRanges : previewInfo );
   };
 
   // submit test creation/updation api

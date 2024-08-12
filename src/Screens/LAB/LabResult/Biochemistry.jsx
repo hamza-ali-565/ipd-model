@@ -26,6 +26,16 @@ const Biochemistry = () => {
     setTestMatchedRange([]);
   };
 
+  // get groupData
+  const getGroupData = async (age, gender, groupParams) => {
+    const response = await axios.post(
+      `${url}/lab/bioGroupRanges`,
+      { age, gender, groupParams },
+      { withCredentials: true }
+    );
+    console.log(response.data.data);
+  };
+
   // set ranges according to age and view data to enter result
   const viewDataToEnterResult = (data) => {
     const age =
@@ -58,6 +68,11 @@ const Biochemistry = () => {
 
     //  converted age
     const givenAge = parseAge(age);
+
+    if (data.groupParams.length > 0) {
+      getGroupData(givenAge, gender, data);
+      return;
+    }
 
     // / Convert given age to days for comparison
     const totalDays = moment
@@ -284,8 +299,14 @@ const Biochemistry = () => {
             value={(labData.length > 0 && labData[0].createdOn) || ""}
           />
           <LabeledInput
+            label={"Gender"}
+            placeholder={"Gender"}
+            disabled
+            value={patientData[0].gender ? patientData[0].gender : ""}
+          />
+          <LabeledInput
             label={"Age"}
-            placeholder={"Booking Date"}
+            placeholder={"Age"}
             disabled
             value={
               patientData.length > 0
