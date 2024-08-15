@@ -302,7 +302,7 @@ const Biochemistry = () => {
             label={"Gender"}
             placeholder={"Gender"}
             disabled
-            value={patientData[0].gender ? patientData[0].gender : ""}
+            value={patientData?.length > 0 ? patientData[0]?.gender : ""}
           />
           <LabeledInput
             label={"Age"}

@@ -305,7 +305,7 @@ const LabTest = () => {
     setReportdays(data?.reportDays);
     setActive(data?.active);
     setStyle(data.style);
-    setPreview(data?.testRanges.length > 0 ? data?.testRanges : previewInfo );
+    setPreview(data?.testRanges.length > 0 ? data?.testRanges : previewInfo);
   };
 
   // submit test creation/updation api
@@ -359,7 +359,6 @@ const LabTest = () => {
               onChange={(e) => setTestName(e.target.value.toUpperCase())}
               value={testName}
               placeholder={"Test Name"}
-              
             />
             <LabelledDropDown
               label={"Department"}
@@ -443,104 +442,112 @@ const LabTest = () => {
             />
           </div>
         </div>
+        {category === "Heading" ? null : (
+          <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
+            <CenterHeading title={"TEST RANGES INFO"} />
+            {rangeInfo.map((_, index) => (
+              <div>
+                <div className="flex items-center flex-col space-y-2 mt-3 md:grid md:grid-cols-2 md:justify-items-center">
+                  <LabelledDropDown
+                    label={"Equipment Type"}
+                    data={equipmentTypeData}
+                    onChange={(selectedOption) =>
+                      handleInputChange(
+                        selectedOption,
+                        index,
+                        "equipment",
+                        "select"
+                      )
+                    }
+                  />
+                  <LabelledDropDown
+                    label={"Gender"}
+                    data={genderData}
+                    onChange={(selectedOption) =>
+                      handleInputChange(
+                        selectedOption,
+                        index,
+                        "gender",
+                        "select"
+                      )
+                    }
+                  />
+                </div>
+                <div className="flex items-center flex-col space-y-2 mt-3 md:grid md:grid-cols-2 md:justify-items-center">
+                  <LabeledInput
+                    label={"Min"}
+                    onChange={(e) => handleInputChange(e, index, "min")}
+                    type={"Number"}
+                    value={rangeInfo[0].min}
+                    placeholder={"Min Range"}
+                  />
+                  <LabeledInput
+                    label={"Max"}
+                    onChange={(e) => handleInputChange(e, index, "max")}
+                    type={"Number"}
+                    value={rangeInfo[0].max}
+                    placeholder={"Max Range"}
+                  />
+                </div>
 
-        <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
-          <CenterHeading title={"TEST RANGES INFO"} />
-          {rangeInfo.map((_, index) => (
-            <div>
-              <div className="flex items-center flex-col space-y-2 mt-3 md:grid md:grid-cols-2 md:justify-items-center">
-                <LabelledDropDown
-                  label={"Equipment Type"}
-                  data={equipmentTypeData}
-                  onChange={(selectedOption) =>
-                    handleInputChange(
-                      selectedOption,
-                      index,
-                      "equipment",
-                      "select"
-                    )
-                  }
-                />
-                <LabelledDropDown
-                  label={"Gender"}
-                  data={genderData}
-                  onChange={(selectedOption) =>
-                    handleInputChange(selectedOption, index, "gender", "select")
-                  }
-                />
+                <div className="flex items-center flex-col space-y-2 mt-3 md:grid md:grid-cols-3 md:justify-items-center">
+                  <LabeledInput
+                    label={"From Age"}
+                    onChange={(e) => handleInputChange(e, index, "fromAge")}
+                    type={"Number"}
+                    value={rangeInfo[0].fromAge}
+                    placeholder={"From Age"}
+                  />
+                  <LabeledInput
+                    label={"To Age"}
+                    onChange={(e) => handleInputChange(e, index, "toAge")}
+                    type={"Number"}
+                    placeholder={"To Age"}
+                    value={rangeInfo[0].toAge}
+                  />
+                  <LabelledDropDown
+                    label={"Age Type"}
+                    data={ageTypeData}
+                    onChange={(selectedOption) =>
+                      handleInputChange(
+                        selectedOption,
+                        index,
+                        "ageType",
+                        "select"
+                      )
+                    }
+                  />
+                </div>
+                <div className="flex items-center flex-col space-y-2 mt-3 md:grid md:grid-cols-2 md:justify-items-center">
+                  <LabelledTextArea
+                    label={"Unit"}
+                    onChange={(e) => handleInputChange(e, index, "unit")}
+                    value={rangeInfo[0].unit}
+                    placeholder={"Unit"}
+                  />
+                  <LabelledTextArea
+                    label={"Normal Ranges"}
+                    onChange={(e) =>
+                      handleInputChange(e, index, "normalRanges")
+                    }
+                    value={rangeInfo[0].normalRanges}
+                    placeholder={"Normal Ranges"}
+                  />
+                </div>
+                <div className="flex justify-center mt-3 space-x-3">
+                  <ButtonDis title={"Add"} onClick={prev} />
+                  <ButtonDis title={"Reset"} onClick={emptyRangesInfo} />
+                </div>
               </div>
-              <div className="flex items-center flex-col space-y-2 mt-3 md:grid md:grid-cols-2 md:justify-items-center">
-                <LabeledInput
-                  label={"Min"}
-                  onChange={(e) => handleInputChange(e, index, "min")}
-                  type={"Number"}
-                  value={rangeInfo[0].min}
-                  placeholder={"Min Range"}
-                />
-                <LabeledInput
-                  label={"Max"}
-                  onChange={(e) => handleInputChange(e, index, "max")}
-                  type={"Number"}
-                  value={rangeInfo[0].max}
-                  placeholder={"Max Range"}
-                />
-              </div>
+            ))}
 
-              <div className="flex items-center flex-col space-y-2 mt-3 md:grid md:grid-cols-3 md:justify-items-center">
-                <LabeledInput
-                  label={"From Age"}
-                  onChange={(e) => handleInputChange(e, index, "fromAge")}
-                  type={"Number"}
-                  value={rangeInfo[0].fromAge}
-                  placeholder={"From Age"}
-                />
-                <LabeledInput
-                  label={"To Age"}
-                  onChange={(e) => handleInputChange(e, index, "toAge")}
-                  type={"Number"}
-                  placeholder={"To Age"}
-                  value={rangeInfo[0].toAge}
-                />
-                <LabelledDropDown
-                  label={"Age Type"}
-                  data={ageTypeData}
-                  onChange={(selectedOption) =>
-                    handleInputChange(
-                      selectedOption,
-                      index,
-                      "ageType",
-                      "select"
-                    )
-                  }
-                />
-              </div>
-              <div className="flex items-center flex-col space-y-2 mt-3 md:grid md:grid-cols-2 md:justify-items-center">
-                <LabelledTextArea
-                  label={"Unit"}
-                  onChange={(e) => handleInputChange(e, index, "unit")}
-                  value={rangeInfo[0].unit}
-                  placeholder={"Unit"}
-                />
-                <LabelledTextArea
-                  label={"Normal Ranges"}
-                  onChange={(e) => handleInputChange(e, index, "normalRanges")}
-                  value={rangeInfo[0].normalRanges}
-                  placeholder={"Normal Ranges"}
-                />
-              </div>
-              <div className="flex justify-center mt-3 space-x-3">
-                <ButtonDis title={"Add"} onClick={prev} />
-                <ButtonDis title={"Reset"} onClick={emptyRangesInfo} />
-              </div>
-            </div>
-          ))}
-
-          {errorMessage && (
-            <p className="flex justify-center font-bold text-red-600 text-xs md:text-sm">
-              *{errorMessage}*
-            </p>
-          )}
-        </div>
+            {errorMessage && (
+              <p className="flex justify-center font-bold text-red-600 text-xs md:text-sm">
+                *{errorMessage}*
+              </p>
+            )}
+          </div>
+        )}
         {previewInfo && (
           <div>
             <div className="container mx-auto mt-3">
