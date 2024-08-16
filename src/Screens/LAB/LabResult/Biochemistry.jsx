@@ -15,6 +15,7 @@ const Biochemistry = () => {
   const [labData, setLabData] = useState([]);
   const [open, setOpen] = useState(false);
   const [testMatchedRange, setTestMatchedRange] = useState([]);
+  const [GroupTestId, setGroupTestId] = useState("")
 
   const url = useSelector((items) => items?.url);
 
@@ -24,6 +25,7 @@ const Biochemistry = () => {
     setLabResultData([]);
     setLabData([]);
     setTestMatchedRange([]);
+    setGroupTestId('')
   };
 
   // get groupData
@@ -46,6 +48,7 @@ const Biochemistry = () => {
 
   // set ranges according to age and view data to enter result
   const viewDataToEnterResult = (data) => {
+    setGroupTestId(data?._id)
     const age =
       patientData.length > 0
         ? `${patientData[0]?.ageYear ? patientData[0]?.ageYear : "0"} Years ${
@@ -76,6 +79,7 @@ const Biochemistry = () => {
 
     //  converted age
     const givenAge = parseAge(age);
+    console.log("data:", data?._id);
 
     if (data.groupParams.length > 0) {
       getGroupData(givenAge, gender, data);
@@ -129,17 +133,17 @@ const Biochemistry = () => {
         testCode: data.testCode,
         testName: data?.testName,
         testId: data._id,
+
       },
     ]);
     // console.log("Matching Range:", testMatchedRange);
-    // console.log("data:", data);
   };
 
   const handlerEffect = (value, type, code) => {
     let updateArray;
     console.log(testMatchedRange);
     if (type === "result") {
-      if (testMatchedRange[0].testRanges) {
+      if (testMatchedRange[0].testRanges?.equipment) {
         return (testMatchedRange[0].testRanges.result = value);
       } else {
         updateArray = testMatchedRange.map((items) => {
@@ -152,7 +156,17 @@ const Biochemistry = () => {
       }
       return;
     } else {
-      testMatchedRange[0].testRanges.remarks = value;
+      if (testMatchedRange[0].testRanges?.equipment) {
+        return (testMatchedRange[0].testRanges.remarks = value);
+      } else {
+        updateArray = testMatchedRange.map((items) => {
+          if (items?.testCode === code) {
+            return { ...items, remarks: value };
+          }
+          return items;
+        });
+        setTestMatchedRange(updateArray);
+      }
     }
   };
 
@@ -202,6 +216,8 @@ const Biochemistry = () => {
       setLabResultData(response?.data?.data.labData);
       setLabNo("");
       setOpen(false);
+      setTestMatchedRange([])
+      setGroupTestId("")
     } catch (error) {
       console.log("error of get details", error);
       let mylab = labNo;
@@ -250,8 +266,8 @@ const Biochemistry = () => {
           mrNo: labData[0]?.mrNo,
           labNo: labData[0]?.labNo,
           resultDepart: labResultData[0]?.department,
-          resultData: [testMatchedRange[0].testRanges],
-          testId: testMatchedRange[0]?.testId,
+          resultData: (testMatchedRange[0].testRanges?.equipment && [testMatchedRange[0].testRanges] || testMatchedRange),
+          testId:( testMatchedRange[0]?.testId && testMatchedRange[0]?.testId ) || GroupTestId,
         },
         { withCredentials: true }
       );
@@ -259,6 +275,7 @@ const Biochemistry = () => {
       setOpen(false);
       await getDetail1(labData[0]?.labNo);
       setTestMatchedRange([]);
+      setGroupTestId("")
       SuccessAlert({ text: "RESULT ENTERED SUCCESSFULLY !!!", timer: 2000 });
     } catch (error) {
       console.log("Error of submit result ", error);
@@ -390,22 +407,22 @@ const Biochemistry = () => {
                   {items?.testName}
                 </p>
                 <p>
-                  {(items?.testRanges && items?.testRanges?.min) ||
+                  {(items?.testRanges?.equipment && items?.testRanges?.min) ||
                     (items?.min && items?.min) ||
                     ""}
                 </p>
                 <p>
-                  {(items?.testRanges && items?.testRanges?.max) ||
+                  {(items?.testRanges?.equipment && items?.testRanges?.max) ||
                     (items?.max && items?.max) ||
                     ""}
                 </p>
                 <p>
-                  {(items?.testRanges && items?.testRanges?.unit) ||
+                  {(items?.testRanges?.equipment && items?.testRanges?.unit) ||
                     (items?.unit && items?.unit) ||
                     ""}
                 </p>
                 <p>
-                  {(items?.testRanges && items?.testRanges?.normalRanges) ||
+                  {(items?.testRanges?.equipment && items?.testRanges?.normalRanges) ||
                     (items?.testRanges && items?.testRanges) ||
                     ""}
                 </p>
@@ -414,7 +431,7 @@ const Biochemistry = () => {
                     className="w-24 rounded-xl p-1"
                     placeholder="result"
                     name=""
-                    // value={items?.charges}
+                    value={items?.category === "Heading" ? "" : items?.result }
                     onChange={(e) =>
                       handlerEffect(e.target.value, "result", items?.testCode)
                     }
@@ -432,16 +449,15 @@ const Biochemistry = () => {
                     placeholder="remarks"
                     min={0}
                     name=""
-                    //   value={items?.charges}
                     onChange={(e) =>
                       handlerEffect(e.target.value, "remarks", items?.testCode)
                     }
+                    value={items?.category === "Heading" ? "" : items?.remarks }
                     disabled={
                       (items?.category && items?.category === "Heading"
                         ? true
                         : false) || false
                     }
-                    //   id=""
                   />
                 </p>
               </div>
