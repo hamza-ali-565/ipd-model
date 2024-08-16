@@ -28,12 +28,20 @@ const Biochemistry = () => {
 
   // get groupData
   const getGroupData = async (age, gender, groupParams) => {
-    const response = await axios.post(
-      `${url}/lab/bioGroupRanges`,
-      { age, gender, groupParams },
-      { withCredentials: true }
-    );
-    console.log(response.data.data);
+    try {
+      setOpen(true);
+      const response = await axios.post(
+        `${url}/lab/bioGroupRanges`,
+        { age, gender, groupParams },
+        { withCredentials: true }
+      );
+      console.log(response.data.data);
+      setTestMatchedRange(response?.data?.data?.data);
+      setOpen(false);
+    } catch (error) {
+      console.log("Error of get group data ", error);
+      setOpen(false);
+    }
   };
 
   // set ranges according to age and view data to enter result
@@ -123,14 +131,25 @@ const Biochemistry = () => {
         testId: data._id,
       },
     ]);
-    console.log("Matching Range:", testMatchedRange);
-    console.log("data:", data);
+    // console.log("Matching Range:", testMatchedRange);
+    // console.log("data:", data);
   };
 
-  const handlerEffect = (value, type) => {
+  const handlerEffect = (value, type, code) => {
+    let updateArray;
     console.log(testMatchedRange);
     if (type === "result") {
-      testMatchedRange[0].testRanges.result = value;
+      if (testMatchedRange[0].testRanges) {
+        return (testMatchedRange[0].testRanges.result = value);
+      } else {
+        updateArray = testMatchedRange.map((items) => {
+          if (items?.testCode === code) {
+            return { ...items, result: value };
+          }
+          return items;
+        });
+        setTestMatchedRange(updateArray);
+      }
       return;
     } else {
       testMatchedRange[0].testRanges.remarks = value;
@@ -363,29 +382,65 @@ const Biochemistry = () => {
             <div className="container mx-auto mt-3" key={index}>
               <div className="mt-3 grid grid-cols-8 text-xs justify-items-center items-center h-10 border border-gray-300">
                 <p>{items?.testCode}</p>
-                <p>{items?.testName}</p>
-                <p>{items?.testRanges?.min}</p>
-                <p>{items?.testRanges?.max}</p>
-                <p>{items?.testRanges?.unit}</p>
-                <p>{items?.testRanges?.normalRanges}</p>
+                <p
+                  className={
+                    items?.bold && items?.bold === true ? "font-bold" : ""
+                  }
+                >
+                  {items?.testName}
+                </p>
+                <p>
+                  {(items?.testRanges && items?.testRanges?.min) ||
+                    (items?.min && items?.min) ||
+                    ""}
+                </p>
+                <p>
+                  {(items?.testRanges && items?.testRanges?.max) ||
+                    (items?.max && items?.max) ||
+                    ""}
+                </p>
+                <p>
+                  {(items?.testRanges && items?.testRanges?.unit) ||
+                    (items?.unit && items?.unit) ||
+                    ""}
+                </p>
+                <p>
+                  {(items?.testRanges && items?.testRanges?.normalRanges) ||
+                    (items?.testRanges && items?.testRanges) ||
+                    ""}
+                </p>
                 <p>
                   <input
                     className="w-24 rounded-xl p-1"
                     placeholder="result"
                     name=""
                     // value={items?.charges}
-                    onChange={(e) => handlerEffect(e.target.value, "result")}
+                    onChange={(e) =>
+                      handlerEffect(e.target.value, "result", items?.testCode)
+                    }
                     id=""
+                    disabled={
+                      (items?.category && items?.category === "Heading"
+                        ? true
+                        : false) || false
+                    }
                   />
                 </p>
                 <p>
                   <input
                     className="w-24 rounded-xl p-1"
-                    placeholder="Charges"
+                    placeholder="remarks"
                     min={0}
                     name=""
                     //   value={items?.charges}
-                    onChange={(e) => handlerEffect(e.target.value, "remarks")}
+                    onChange={(e) =>
+                      handlerEffect(e.target.value, "remarks", items?.testCode)
+                    }
+                    disabled={
+                      (items?.category && items?.category === "Heading"
+                        ? true
+                        : false) || false
+                    }
                     //   id=""
                   />
                 </p>
