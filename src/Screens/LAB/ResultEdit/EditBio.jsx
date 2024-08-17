@@ -8,7 +8,7 @@ import Loader from "../../../Components/Modal/Loader";
 import moment from "moment/moment";
 import ButtonDis from "../../../Components/Button/ButtonDis";
 
-const Biochemistry = () => {
+const EditBio = () => {
   const [labNo, setLabNo] = useState("");
   const [patientData, setPatientData] = useState([]);
   const [labResultData, setLabResultData] = useState([]);
@@ -16,7 +16,6 @@ const Biochemistry = () => {
   const [open, setOpen] = useState(false);
   const [testMatchedRange, setTestMatchedRange] = useState([]);
   const [GroupTestId, setGroupTestId] = useState("");
-  const [testName, setTestName] = useState("");
 
   const url = useSelector((items) => items?.url);
 
@@ -27,7 +26,6 @@ const Biochemistry = () => {
     setLabData([]);
     setTestMatchedRange([]);
     setGroupTestId("");
-    setTestName("");
   };
 
   // get groupData
@@ -51,7 +49,6 @@ const Biochemistry = () => {
   // set ranges according to age and view data to enter result
   const viewDataToEnterResult = (data) => {
     setGroupTestId(data?._id);
-    setTestName(data?.testName);
     const age =
       patientData.length > 0
         ? `${patientData[0]?.ageYear ? patientData[0]?.ageYear : "0"} Years ${
@@ -133,7 +130,7 @@ const Biochemistry = () => {
     setTestMatchedRange([
       {
         testRanges: matchingRange ? matchingRange : {},
-        testCode: data?.testCode,
+        testCode: data.testCode,
         testName: data?.testName,
         testId: data._id,
       },
@@ -141,16 +138,13 @@ const Biochemistry = () => {
     // console.log("Matching Range:", testMatchedRange);
   };
 
-  const handlerEffect = (value, type, code, name) => {
+  const handlerEffect = (value, type, code) => {
     let updateArray;
     console.log(testMatchedRange);
     if (type === "result") {
       if (testMatchedRange[0].testRanges?.equipment) {
-        testMatchedRange[0].testRanges.result = value;  // Add or modify the result property
-        testMatchedRange[0].testRanges.testCode = code;  // Add the testCode property
-        testMatchedRange[0].testRanges.testName = name;  // Add the testCode property
-        return testMatchedRange[0].testRanges;
-      }else {
+        return (testMatchedRange[0].testRanges.result = value);
+      } else {
         updateArray = testMatchedRange.map((items) => {
           if (items?.testCode === code) {
             return { ...items, result: value };
@@ -173,6 +167,15 @@ const Biochemistry = () => {
         setTestMatchedRange(updateArray);
       }
     }
+  };
+
+  const ResultToEdit = async (data) => {
+    setTestMatchedRange(data);
+    const response = await axios.post(
+      `${url}/lab/editRanges`,
+      { patientData, testData:testMatchedRange },
+      { withCredentials: true }
+    );
   };
 
   //getDetail
@@ -208,20 +211,17 @@ const Biochemistry = () => {
       }
       setOpen(true);
       console.log(" i am here");
-      const response = await axios.get(
-        `${url}/lab/biochemistry?labNo=${labNo}`,
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axios.get(`${url}/lab/resultEdit?labNo=${labNo}`, {
+        withCredentials: true,
+      });
       console.log("response of getDetails", response?.data?.data);
 
       setPatientData(response?.data?.data.patientData);
       setLabData(response?.data?.data.labCDetails);
-      setLabResultData(response?.data?.data.labData);
+      setLabResultData(response?.data?.data.data);
       setLabNo("");
       setOpen(false);
-      setTestMatchedRange([]);
+      //   setTestMatchedRange([])
       setGroupTestId("");
     } catch (error) {
       console.log("error of get details", error);
@@ -279,7 +279,6 @@ const Biochemistry = () => {
           testId:
             (testMatchedRange[0]?.testId && testMatchedRange[0]?.testId) ||
             GroupTestId,
-          testName: testName,
         },
         { withCredentials: true }
       );
@@ -288,7 +287,6 @@ const Biochemistry = () => {
       await getDetail1(labData[0]?.labNo);
       setTestMatchedRange([]);
       setGroupTestId("");
-      setTestName("");
       SuccessAlert({ text: "RESULT ENTERED SUCCESSFULLY !!!", timer: 2000 });
     } catch (error) {
       console.log("Error of submit result ", error);
@@ -379,11 +377,11 @@ const Biochemistry = () => {
             <div
               key={index}
               className="cursor-pointer hover:text-blue-600 hover:font-bold"
-              onClick={() => viewDataToEnterResult(items)}
+              onClick={() => ResultToEdit(items?.resultData)}
             >
               <LabeledInput
                 label={"Test Name"}
-                value={`${items?.testName} ${items?.thisIs}`}
+                value={`${items?.testName}`}
                 disabled
               />
             </div>
@@ -447,7 +445,7 @@ const Biochemistry = () => {
                     name=""
                     value={items?.category === "Heading" ? "" : items?.result}
                     onChange={(e) =>
-                      handlerEffect(e.target.value, "result", items?.testCode, items?.testName)
+                      handlerEffect(e.target.value, "result", items?.testCode)
                     }
                     id=""
                     disabled={
@@ -487,4 +485,4 @@ const Biochemistry = () => {
   );
 };
 
-export default Biochemistry;
+export default EditBio;

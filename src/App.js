@@ -72,6 +72,8 @@ import LabBooking from "./Screens/LAB/Transaction/Lab.Booking";
 import LabCancCash from "./Screens/LAB/Transaction/LabCanc.Cash";
 import LabResultMaster from "./Screens/LAB/LabResult/LabResultMaster";
 import Biochemistry from "./Screens/LAB/LabResult/Biochemistry";
+import ResultEditMaster from "./Screens/LAB/ResultEdit/ResultEditMaster";
+import EditBio from "./Screens/LAB/ResultEdit/EditBio";
 
 
 function App() {
@@ -264,6 +266,9 @@ function App() {
                 <Route path="biochemistry" element={<Biochemistry />} />
                 <Route path="labcancellationcash" element={<LabCancCash />} />
                 <Route path="labcancellationipd" element={<LabCancCash />} />
+              </Route>
+              <Route path="lab/resultEdit/*" element={<ResultEditMaster />}>
+                <Route path="biochemistryEdit" element={<EditBio />} />
               </Route>
               <Route
                 path="setups/consultant/*"
