@@ -170,16 +170,16 @@ const EditBio = () => {
     }
   };
 
-  const ResultToEdit = async (data, id) => {
+  const ResultToEdit = async (data, id, testId) => {
     try {
-      console.log("Data  ", data, id);
+      console.log("Data  ", data, id, testId);
       // setTestMatchedRange(data);
       setResultId(id);
       setOpen(true);
 
       const response = await axios.post(
         `${url}/lab/editRanges`,
-        { patientData, testData: data },
+        { patientData, testData: data, testId },
         { withCredentials: true }
       );
 
@@ -383,7 +383,9 @@ const EditBio = () => {
             <div
               key={index}
               className="cursor-pointer hover:text-blue-600 hover:font-bold"
-              onClick={() => ResultToEdit(items?.resultData, items?._id)}
+              onClick={() =>
+                ResultToEdit(items?.resultData, items?._id, items?.testId)
+              }
             >
               <LabeledInput
                 label={"Test Name"}
