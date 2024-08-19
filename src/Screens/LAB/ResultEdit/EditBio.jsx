@@ -16,6 +16,7 @@ const EditBio = () => {
   const [open, setOpen] = useState(false);
   const [testMatchedRange, setTestMatchedRange] = useState([]);
   const [GroupTestId, setGroupTestId] = useState("");
+  const [resultId, setResultId] = useState("");
 
   const url = useSelector((items) => items?.url);
 
@@ -169,13 +170,26 @@ const EditBio = () => {
     }
   };
 
-  const ResultToEdit = async (data) => {
-    setTestMatchedRange(data);
-    const response = await axios.post(
-      `${url}/lab/editRanges`,
-      { patientData, testData:testMatchedRange },
-      { withCredentials: true }
-    );
+  const ResultToEdit = async (data, id) => {
+    try {
+      console.log("Data  ", data, id);
+      // setTestMatchedRange(data);
+      setResultId(id);
+      setOpen(true);
+
+      const response = await axios.post(
+        `${url}/lab/editRanges`,
+        { patientData, testData: data },
+        { withCredentials: true }
+      );
+
+      console.log("response of resultToEdit  ", response.data.data);
+      setOpen(false);
+      setTestMatchedRange(response?.data?.data?.data);
+    } catch (error) {
+      console.log("Error of result to edit ", error);
+      setOpen(false);
+    }
   };
 
   //getDetail
@@ -266,19 +280,11 @@ const EditBio = () => {
     try {
       setOpen(true);
       const response = await axios.post(
-        `${url}/lab/labResultEntry`,
+        `${url}/lab/resultUpdate`,
         {
-          mrNo: labData[0]?.mrNo,
           labNo: labData[0]?.labNo,
-          resultDepart: labResultData[0]?.department,
-          resultData:
-            (testMatchedRange[0].testRanges?.equipment && [
-              testMatchedRange[0].testRanges,
-            ]) ||
-            testMatchedRange,
-          testId:
-            (testMatchedRange[0]?.testId && testMatchedRange[0]?.testId) ||
-            GroupTestId,
+          resultData: testMatchedRange,
+          _id: resultId,
         },
         { withCredentials: true }
       );
@@ -377,7 +383,7 @@ const EditBio = () => {
             <div
               key={index}
               className="cursor-pointer hover:text-blue-600 hover:font-bold"
-              onClick={() => ResultToEdit(items?.resultData)}
+              onClick={() => ResultToEdit(items?.resultData, items?._id)}
             >
               <LabeledInput
                 label={"Test Name"}
@@ -433,8 +439,7 @@ const EditBio = () => {
                     ""}
                 </p>
                 <p>
-                  {(items?.testRanges?.equipment &&
-                    items?.testRanges?.normalRanges) ||
+                  {(items?.equipment && items?.normalRanges) ||
                     (items?.testRanges && items?.testRanges) ||
                     ""}
                 </p>
