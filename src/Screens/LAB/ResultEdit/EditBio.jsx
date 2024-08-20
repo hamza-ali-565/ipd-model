@@ -442,7 +442,7 @@ const EditBio = () => {
                 </p>
                 <p>
                   {(items?.equipment && items?.normalRanges) ||
-                    (items?.testRanges && items?.testRanges) ||
+                    (items?.normalRanges && items?.normalRanges) ||
                     ""}
                 </p>
                 <p>
