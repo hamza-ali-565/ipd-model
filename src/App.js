@@ -76,6 +76,7 @@ import ResultEditMaster from "./Screens/LAB/ResultEdit/ResultEditMaster";
 import EditBio from "./Screens/LAB/ResultEdit/EditBio";
 import Hematology from "./Screens/LAB/LabResult/Hematology";
 import Serology from "./Screens/LAB/LabResult/Serology";
+import Parasitology from "./Screens/LAB/LabResult/Parasitology";
 
 function App() {
   const dispatch = useDispatch();
@@ -276,6 +277,7 @@ function App() {
                 <Route path="biochemistry" element={<Biochemistry />} />
                 <Route path="hematology" element={<Hematology />} />
                 <Route path="serology" element={<Serology />} />
+                <Route path="parasitology" element={<Parasitology />} />
               </Route>
               <Route path="lab/resultEdit/*" element={<ResultEditMaster />}>
                 <Route path="biochemistryEdit" element={<EditBio />} />
