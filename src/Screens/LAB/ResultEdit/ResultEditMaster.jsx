@@ -6,7 +6,7 @@ const ResultEditMaster = () => {
   const data = [
     { name: "--" },
     { name: "Edit Biochemistry" },
-    { name: "Edit Haematology" },
+    { name: "Edit Hematology" },
     { name: "Edit Microbiology" },
   ];
 
@@ -18,8 +18,8 @@ const ResultEditMaster = () => {
     if (name === "Edit Biochemistry") {
       path = "biochemistryEdit"; // Relative path
       navigate(path);
-    } else if (name === "Edit Haematology") {
-      path = "haematologyEdit"; // Relative path
+    } else if (name === "Edit Hematology") {
+      path = "hematologyEdit"; // Relative path
       navigate(path);
     } else if (name === "Edit Microbiology") {
       path = "microbiologyEdit"; // Relative path
