@@ -7,6 +7,7 @@ const LabResultMaster = () => {
     { name: "--" },
     { name: "Biochemistry" },
     { name: "Hematology" },
+    { name: "Serology" },
     { name: "Microbiology" },
   ];
 
@@ -21,7 +22,10 @@ const LabResultMaster = () => {
     } else if (name === "Hematology") {
       path = "hematology"; // Relative path
       navigate(path);
-    } else if (name === "Microbiology") {
+    } else if (name === "Serology") {
+      path = "serology"; // Relative path
+      navigate(path);
+    }else if (name === "Microbiology") {
       path = "microbiology"; // Relative path
       navigate(path);
     }

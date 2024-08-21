@@ -132,7 +132,7 @@ const Hematology = () => {
 
     setTestMatchedRange([
       {
-        testRanges: matchingRange ? matchingRange : {},
+        testRanges: matchingRange ? matchingRange : "",
         testCode: data?.testCode,
         testName: data?.testName,
         testId: data._id,
