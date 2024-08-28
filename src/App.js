@@ -78,6 +78,7 @@ import Hematology from "./Screens/LAB/LabResult/Hematology";
 import Serology from "./Screens/LAB/LabResult/Serology";
 import Parasitology from "./Screens/LAB/LabResult/Parasitology";
 import ChemicalPath from "./Screens/LAB/LabResult/ChemicalPath";
+import ResultPrint from "./Screens/LAB/ResultPrint/ResultPrint";
 
 function App() {
   const dispatch = useDispatch();
@@ -284,10 +285,10 @@ function App() {
               <Route path="lab/resultEdit/*" element={<ResultEditMaster />}>
                 <Route path="biochemistryEdit" element={<EditBio />} />
               </Route>
-              <Route
-                path="setups/consultant/*"
-                element={<Consultant />}
-              ></Route>
+              <Route path="lab/resultPrint/*" element={<ResultPrint />}>
+                {/* <Route path="biochemistryEdit" element={<EditBio />} /> */}
+              </Route>
+              
             </Route>
 
             <Route path="*" element={<Navigate to="/mainpage" replace />} />
