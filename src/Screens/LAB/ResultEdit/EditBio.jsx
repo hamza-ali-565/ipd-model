@@ -4,6 +4,7 @@ import LabeledInput from "../../../Components/LabelledInput/LabeledInput";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { ErrorAlert, SuccessAlert } from "../../../Components/Alert/Alert";
+import { Typewriter } from "react-simple-typewriter";
 import Loader from "../../../Components/Modal/Loader";
 import moment from "moment/moment";
 import ButtonDis from "../../../Components/Button/ButtonDis";
@@ -301,193 +302,229 @@ const EditBio = () => {
   };
 
   return (
-    <div className="md:grid md:grid-cols-2 md:grid-rows-2">
-      {/* Patient Detail */}
-      <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
-        <CenterHeading title={"Patient Detail"} />
-        <form
-          className="flex justify-center my-2"
-          onSubmit={(e) => getDetails(e)}
-        >
-          <LabeledInput
-            label={"Lab No"}
-            placeholder={"Enter Lab No and press ENTER"}
-            onChange={(e) => setLabNo(e.target.value)}
-            value={labNo}
+    <div>
+      <h1
+        style={{
+          paddingTop: "1.1rem",
+          textAlign: "center",
+          fontWeight: "normal",
+        }}
+      >
+        Here You Can Edit Result Of{" "}
+        <span style={{ color: "red", fontWeight: "bold" }}>
+          {/* Style will be inherited from the parent element */}
+          <Typewriter
+            words={[
+              "Biochemistry",
+              "Hematology",
+              "Serology",
+              "Parasitology",
+              "Chemical Pathology",
+            ]}
+            loop={5}
+            cursor
+            cursorStyle="_"
+            typeSpeed={70}
+            deleteSpeed={50}
+            delaySpeed={1000}
           />
-        </form>
-        <div className="flex flex-col items-center space-y-2">
-          <LabeledInput
-            label={"Patient Name"}
-            placeholder={"Lab No"}
-            disabled
-            value={
-              patientData.length > 0
-                ? `${patientData[0].patientType} ${patientData[0].patientName}  ${patientData[0].relativeType} ${patientData[0].relativeName}`
-                : ""
-            }
-          />
-          <LabeledInput
-            label={"Phone No."}
-            placeholder={"Phone No"}
-            disabled
-            value={(patientData.length > 0 && patientData[0].cellNo) || ""}
-          />
-          <LabeledInput
-            label={"Lab No"}
-            placeholder={"Lab No"}
-            disabled
-            value={(labData.length > 0 && labData[0].labNo) || ""}
-          />
-          <LabeledInput
-            label={"Mr No"}
-            placeholder={"Mr No"}
-            disabled
-            value={(patientData.length > 0 && patientData[0].MrNo) || ""}
-          />
-          <LabeledInput
-            label={"Booking Date"}
-            placeholder={"Booking Date"}
-            disabled
-            value={(labData.length > 0 && labData[0].createdOn) || ""}
-          />
-          <LabeledInput
-            label={"Gender"}
-            placeholder={"Gender"}
-            disabled
-            value={patientData?.length > 0 ? patientData[0]?.gender : ""}
-          />
-          <LabeledInput
-            label={"Age"}
-            placeholder={"Age"}
-            disabled
-            value={
-              patientData.length > 0
-                ? `${
-                    patientData[0]?.ageYear ? patientData[0]?.ageYear : "0"
-                  } Years ${
-                    patientData[0]?.ageMonth ? patientData[0]?.ageMonth : "0"
-                  } Months ${
-                    patientData[0]?.ageDay ? patientData[0]?.ageDay : "0"
-                  } Days`
-                : ""
-            }
-          />
-        </div>
-      </div>
-      {/* test detail */}
-      <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
-        <CenterHeading title={"Test Detail"} />
-        <div className="flex flex-col items-center space-y-2 mt-3">
-          {labResultData.map((items, index) => (
-            <div
-              key={index}
-              className="cursor-pointer hover:text-blue-600 hover:font-bold"
-              onClick={() =>
-                ResultToEdit(items?.resultData, items?._id, items?.testId)
+        </span>
+      </h1>
+      <div className="md:grid md:grid-cols-2 md:grid-rows-2">
+        {/* Patient Detail */}
+        <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
+          <CenterHeading title={"Patient Detail"} />
+          <form
+            className="flex justify-center my-2"
+            onSubmit={(e) => getDetails(e)}
+          >
+            <LabeledInput
+              label={"Lab No"}
+              placeholder={"Enter Lab No and press ENTER"}
+              onChange={(e) => setLabNo(e.target.value)}
+              value={labNo}
+            />
+          </form>
+          <div className="flex flex-col items-center space-y-2">
+            <LabeledInput
+              label={"Patient Name"}
+              placeholder={"Lab No"}
+              disabled
+              value={
+                patientData.length > 0
+                  ? `${patientData[0].patientType} ${patientData[0].patientName}  ${patientData[0].relativeType} ${patientData[0].relativeName}`
+                  : ""
               }
-            >
-              <LabeledInput
-                label={"Test Name"}
-                value={`${items?.testName}`}
-                disabled
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-      {/* test entry */}
-      <div className="md:col-span-2 bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
-        <CenterHeading title={"Test Entry"} />
-        {/* Header */}
-        <div className="container mx-auto mt-3">
-          <div className="mt-3 grid grid-cols-8 text-xs font-bold justify-items-center items-center h-16 border border-gray-300">
-            <p>Test Code</p>
-            <p>Test Name</p>
-            <p>Min</p>
-            <p>Max</p>
-            <p>Unit</p>
-            <p>Ranges</p>
-            <p>Result</p>
-            <p>Remarks</p>
+            />
+            <LabeledInput
+              label={"Phone No."}
+              placeholder={"Phone No"}
+              disabled
+              value={(patientData.length > 0 && patientData[0].cellNo) || ""}
+            />
+            <LabeledInput
+              label={"Lab No"}
+              placeholder={"Lab No"}
+              disabled
+              value={(labData.length > 0 && labData[0].labNo) || ""}
+            />
+            <LabeledInput
+              label={"Mr No"}
+              placeholder={"Mr No"}
+              disabled
+              value={(patientData.length > 0 && patientData[0].MrNo) || ""}
+            />
+            <LabeledInput
+              label={"Booking Date"}
+              placeholder={"Booking Date"}
+              disabled
+              value={(labData.length > 0 && labData[0].createdOn) || ""}
+            />
+            <LabeledInput
+              label={"Gender"}
+              placeholder={"Gender"}
+              disabled
+              value={patientData?.length > 0 ? patientData[0]?.gender : ""}
+            />
+            <LabeledInput
+              label={"Age"}
+              placeholder={"Age"}
+              disabled
+              value={
+                patientData.length > 0
+                  ? `${
+                      patientData[0]?.ageYear ? patientData[0]?.ageYear : "0"
+                    } Years ${
+                      patientData[0]?.ageMonth ? patientData[0]?.ageMonth : "0"
+                    } Months ${
+                      patientData[0]?.ageDay ? patientData[0]?.ageDay : "0"
+                    } Days`
+                  : ""
+              }
+            />
           </div>
         </div>
-        {/* data */}
-        {testMatchedRange.length > 0 &&
-          testMatchedRange.map((items, index) => (
-            <div className="container mx-auto mt-3" key={index}>
-              <div className="mt-3 grid grid-cols-8 text-xs justify-items-center items-center h-10 border border-gray-300">
-                <p>{items?.testCode}</p>
-                <p
-                  className={
-                    items?.bold && items?.bold === true ? "font-bold" : ""
-                  }
-                >
-                  {items?.testName}
-                </p>
-                <p>
-                  {(items?.testRanges?.equipment && items?.testRanges?.min) ||
-                    (items?.min && items?.min) ||
-                    ""}
-                </p>
-                <p>
-                  {(items?.testRanges?.equipment && items?.testRanges?.max) ||
-                    (items?.max && items?.max) ||
-                    ""}
-                </p>
-                <p>
-                  {(items?.testRanges?.equipment && items?.testRanges?.unit) ||
-                    (items?.unit && items?.unit) ||
-                    ""}
-                </p>
-                <p>
-                  {(items?.equipment && items?.normalRanges) ||
-                    (items?.normalRanges && items?.normalRanges) ||
-                    ""}
-                </p>
-                <p>
-                  <input
-                    className="w-24 rounded-xl p-1"
-                    placeholder="result"
-                    name=""
-                    value={items?.category === "Heading" ? "" : items?.result}
-                    onChange={(e) =>
-                      handlerEffect(e.target.value, "result", items?.testCode)
-                    }
-                    id=""
-                    disabled={
-                      (items?.category && items?.category === "Heading"
-                        ? true
-                        : false) || false
-                    }
-                  />
-                </p>
-                <p>
-                  <input
-                    className="w-24 rounded-xl p-1"
-                    placeholder="remarks"
-                    min={0}
-                    name=""
-                    onChange={(e) =>
-                      handlerEffect(e.target.value, "remarks", items?.testCode)
-                    }
-                    value={items?.category === "Heading" ? "" : items?.remarks}
-                    disabled={
-                      (items?.category && items?.category === "Heading"
-                        ? true
-                        : false) || false
-                    }
-                  />
-                </p>
+        {/* test detail */}
+        <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
+          <CenterHeading title={"Test Detail"} />
+          <div className="flex flex-col items-center space-y-2 mt-3">
+            {labResultData.map((items, index) => (
+              <div
+                key={index}
+                className="cursor-pointer hover:text-blue-600 hover:font-bold"
+                onClick={() =>
+                  ResultToEdit(items?.resultData, items?._id, items?.testId)
+                }
+              >
+                <LabeledInput
+                  label={"Test Name"}
+                  value={`${items?.testName}`}
+                  disabled
+                />
               </div>
-            </div>
-          ))}
-        <div className="flex justify-center space-x-2 mt-5">
-          <ButtonDis title={"Save"} onClick={submitResult} />
-          <ButtonDis title={"Refresh"} onClick={resetDetails} />
+            ))}
+          </div>
         </div>
+        {/* test entry */}
+        <div className="md:col-span-2 bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
+          <CenterHeading title={"Test Entry"} />
+          {/* Header */}
+          <div className="container mx-auto mt-3">
+            <div className="mt-3 grid grid-cols-8 text-xs font-bold justify-items-center items-center h-16 border border-gray-300">
+              <p>Test Code</p>
+              <p>Test Name</p>
+              <p>Min</p>
+              <p>Max</p>
+              <p>Unit</p>
+              <p>Ranges</p>
+              <p>Result</p>
+              <p>Remarks</p>
+            </div>
+          </div>
+          {/* data */}
+          {testMatchedRange.length > 0 &&
+            testMatchedRange.map((items, index) => (
+              <div className="container mx-auto mt-3" key={index}>
+                <div className="mt-3 grid grid-cols-8 text-xs justify-items-center items-center h-10 border border-gray-300">
+                  <p>{items?.testCode}</p>
+                  <p
+                    className={
+                      items?.bold && items?.bold === true ? "font-bold" : ""
+                    }
+                  >
+                    {items?.testName}
+                  </p>
+                  <p>
+                    {(items?.testRanges?.equipment && items?.testRanges?.min) ||
+                      (items?.min && items?.min) ||
+                      ""}
+                  </p>
+                  <p>
+                    {(items?.testRanges?.equipment && items?.testRanges?.max) ||
+                      (items?.max && items?.max) ||
+                      ""}
+                  </p>
+                  <p>
+                    {(items?.testRanges?.equipment &&
+                      items?.testRanges?.unit) ||
+                      (items?.unit && items?.unit) ||
+                      ""}
+                  </p>
+                  <p>
+                    {(items?.equipment && items?.normalRanges) ||
+                      (items?.normalRanges && items?.normalRanges) ||
+                      ""}
+                  </p>
+                  <p>
+                    <input
+                      className="w-24 rounded-xl p-1"
+                      placeholder="result"
+                      name=""
+                      value={items?.category === "Heading" ? "" : items?.result}
+                      onChange={(e) =>
+                        handlerEffect(e.target.value, "result", items?.testCode)
+                      }
+                      id=""
+                      disabled={
+                        (items?.category && items?.category === "Heading"
+                          ? true
+                          : false) || false
+                      }
+                    />
+                  </p>
+                  <p>
+                    <input
+                      className="w-24 rounded-xl p-1"
+                      placeholder="remarks"
+                      min={0}
+                      name=""
+                      onChange={(e) =>
+                        handlerEffect(
+                          e.target.value,
+                          "remarks",
+                          items?.testCode
+                        )
+                      }
+                      value={
+                        items?.category === "Heading" ? "" : items?.remarks
+                      }
+                      disabled={
+                        (items?.category && items?.category === "Heading"
+                          ? true
+                          : false) || false
+                      }
+                    />
+                  </p>
+                </div>
+              </div>
+            ))}
+          <div className="flex justify-center space-x-2 mt-5">
+            <ButtonDis title={"Save"} onClick={submitResult} />
+            <ButtonDis title={"Refresh"} onClick={resetDetails} />
+          </div>
+        </div>
+        <Loader onClick={open} title={"Please Wait ..."} />
       </div>
-      <Loader onClick={open} title={"Please Wait ..."} />
     </div>
   );
 };
