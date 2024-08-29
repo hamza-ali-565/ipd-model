@@ -38,6 +38,7 @@ const CustomPage = ({ userName, content, patientData, labData }) => {
       pages.push(
         <Page style={styles.page} key={`page-${pages.length}`}>
           <Header />
+          <PatDetails patientData={patientData} labData={labData} />
           <View style={styles.content}>{currentPageContent}</View>
           <Footer userName={userName} />
         </Page>
