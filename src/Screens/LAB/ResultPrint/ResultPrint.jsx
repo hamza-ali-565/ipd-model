@@ -14,7 +14,9 @@ const ResultPrint = () => {
   const [labResultData, setLabResultData] = useState([]);
   const [labData, setLabData] = useState([]);
   const [open, setOpen] = useState(false);
-  const [testMatchedRange, setTestMatchedRange] = useState([]);
+  const [printData, setPrintData] = useState([
+    { testName: "", resultData: [] },
+  ]);
   const [GroupTestId, setGroupTestId] = useState("");
   const [testName, setTestName] = useState("");
 
@@ -25,12 +27,13 @@ const ResultPrint = () => {
     setPatientData([]);
     setLabResultData([]);
     setLabData([]);
-    setTestMatchedRange([]);
+    setPrintData([{ testName: "", resultData: [] }]);
     setGroupTestId("");
     setTestName("");
   };
 
   const getDetails = (e) => {
+    setOpen(true);
     e.preventDefault();
     const data = new Promise((resolve, reject) => {
       const response = axios.get(`${url}/lab/resultEdit?labNo=${labNo}`, {
@@ -46,10 +49,48 @@ const ResultPrint = () => {
     data
       .then((value) => {
         console.log("RESPONSE", value);
+        setLabResultData(value?.data?.data?.data);
+        setPatientData(value?.data?.data?.patientData);
+        setLabData(value?.data?.data?.labCDetails);
+        setOpen(false);
       })
       .catch((error) => {
         console.log("Errorss ", error);
+        setOpen(false);
       });
+  };
+
+  const creatingPDFReady = (value, items) => {
+    console.log("item ", items);
+
+    if (value === false) {
+      const excludingPrev = printData.filter(
+        (data) => data?._id !== items?._id
+      );
+      console.log("printData", printData);
+
+      setPrintData(excludingPrev);
+      return;
+    }
+    let updatedData;
+
+    updatedData = printData.map((item) => ({
+      ...item,
+      testName: items?.testName,
+      resultData: items?.resultData,
+      _id: items?._id,
+    }));
+
+    console.log("Updated Data ", updatedData);
+
+    setPrintData([...printData, updatedData[0]]);
+  };
+
+  const CheckDataBeforePrint = () => {
+    const removeData = printData.filter((item) => item?.testName !== "");
+    setPrintData(removeData);
+    console.log("removeData ", removeData);
+    console.log("printData ", printData);
   };
 
   return (
@@ -133,16 +174,28 @@ const ResultPrint = () => {
         <div className="flex flex-col items-center bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
           <div>
             <CenterHeading title={"Test Detail"} />
-            <div className="flex  mt-3 items-center space-x-2">
-              <input type="checkbox" name="" id="" />
-              <div className="cursor-pointer hover:text-blue-600 hover:font-bold">
-                <LabeledInput
-                  label={"Test Name"}
-                  value={"${items?.testName} ${items?.thisIs}"}
-                  disabled
-                />
-              </div>
-            </div>
+            {labResultData.length > 0 &&
+              labResultData.map((item, index) => (
+                <div className="flex  mt-3 items-center space-x-2" key={index}>
+                  <input
+                    type="checkbox"
+                    name=""
+                    id=""
+                    onChange={(e) => creatingPDFReady(e.target.checked, item)}
+                  />
+                  <div className="cursor-pointer hover:text-blue-600 hover:font-bold">
+                    <LabeledInput
+                      label={"TEST NAME"}
+                      value={item?.testName}
+                      disabled
+                    />
+                  </div>
+                </div>
+              ))}
+          </div>
+          <div className="mt-4 flex space-x-2">
+            <ButtonDis title={"Print"} onClick={() => CheckDataBeforePrint()} />
+            <ButtonDis title={"Refresh"} onClick={() => resetDetails()} />
           </div>
         </div>
 
