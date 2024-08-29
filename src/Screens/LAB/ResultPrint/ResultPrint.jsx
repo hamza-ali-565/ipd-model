@@ -7,6 +7,10 @@ import { ErrorAlert, SuccessAlert } from "../../../Components/Alert/Alert";
 import Loader from "../../../Components/Modal/Loader";
 import moment from "moment/moment";
 import ButtonDis from "../../../Components/Button/ButtonDis";
+import { pdf } from "@react-pdf/renderer";
+import { v4 as uuidv4 } from "uuid";
+import LabResultPDF from "../../../Components/PDFDetails/LabResultPDF";
+import PageBreak from "../../../Components/PDFDetails/PracticePageBreak";
 
 const ResultPrint = () => {
   const [labNo, setLabNo] = useState("");
@@ -21,6 +25,7 @@ const ResultPrint = () => {
   const [testName, setTestName] = useState("");
 
   const url = useSelector((items) => items?.url);
+  const userData = useSelector((items) => items?.response);
 
   const resetDetails = () => {
     setLabNo("");
@@ -89,8 +94,116 @@ const ResultPrint = () => {
   const CheckDataBeforePrint = () => {
     const removeData = printData.filter((item) => item?.testName !== "");
     setPrintData(removeData);
+    printResultToPdf();
     console.log("removeData ", removeData);
     console.log("printData ", printData);
+  };
+
+
+const dataa = [
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+  { text: "hello" },
+
+]
+
+  const printResultToPdf = async (data) => {
+    const key = uuidv4();
+
+    // Create a PDF document as a Blob
+    const blob = await pdf(
+      <PageBreak
+        key={key}
+        userName={userData[0]?.userId}
+        patientData={patientData}
+        labData={labData}
+        // resultData={printData}
+        content={dataa}
+      />
+    ).toBlob();
+
+    // Create a Blob URL and open it in a new tab
+    let url = URL.createObjectURL(blob);
+    window.open(url, "_blank");
+    url = "";
   };
 
   return (
