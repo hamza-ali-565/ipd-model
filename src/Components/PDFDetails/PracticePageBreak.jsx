@@ -8,16 +8,52 @@ import {
   Font,
 } from "@react-pdf/renderer";
 
+Font.register({
+  family: "Roboto",
+  fonts: [
+    {
+      src: require("../../Utils/Fonts/Roboto-Regular.ttf"),
+      fontWeight: "normal",
+      fontStyle: "normal",
+    },
+    {
+      src: require("../../Utils/Fonts/Roboto-Bold.ttf"),
+      fontWeight: "bold",
+      fontStyle: "normal",
+    },
+    {
+      src: require("../../Utils/Fonts/Roboto-Italic.ttf"),
+      fontWeight: "normal",
+      fontStyle: "italic",
+    },
+    {
+      src: require("../../Utils/Fonts/Roboto-BoldItalic.ttf"),
+      fontWeight: "bold",
+      fontStyle: "italic",
+    },
+  ],
+});
 
 Font.register({
-    family: "Roboto",
-    fonts: [
-      { src: require("../../Utils/Fonts/Roboto-Bold.ttf"), fontWeight: "normal" },
-      { src: require("../../Utils/Fonts/Roboto-Bold.ttf"), fontWeight: "bold" },
-    ],
-  });
-  
-  
+  family: "Matemasie",
+  fonts: [
+    {
+      src: require("../../Utils/FontMatemasie/Matemasie-Regular.ttf"),
+      fontWeight: "normal",
+      fontStyle: "normal",
+    },
+  ],
+});
+Font.register({
+  family: "Kalam",
+  fonts: [
+    {
+      src: require("../../Utils/Kalam/Kalam-Bold.ttf"),
+      fontWeight: "normal",
+      fontStyle: "normal",
+    },
+  ],
+});
 
 // Font.register({
 //   family: "Roboto",
@@ -34,7 +70,7 @@ const CustomPage = ({
 }) => {
   const content = [{ text: "hello" }];
 
-  const pageHeightLimit = 700; // Adjust this based on your requirements
+  const pageHeightLimit = 600; // Adjust this based on your requirements
   let currentHeight = 0;
 
   const renderContentWithBreaks = (content) => {
@@ -58,66 +94,208 @@ const CustomPage = ({
         );
 
         // Start a new page
-        currentPageContent = [<Text key={index}>{item?.testName}</Text>];
-        currentHeight = itemHeight;
-      } else {
-        currentPageContent.push(
-          <View key={index}>
+        currentPageContent = [
+          <View
+            key={index}
+            style={{ border: "1px solid gray", marginTop: 6, paddingBottom: 2 }}
+          >
             <Text
               style={{
                 textDecoration: "underline",
-                fontFamily: "Roboto",
+                fontFamily: "Kalam",
                 fontWeight: "bold", // Use "bold" instead of "ultrabold"
                 fontSize: 15,
-                marginTop: 3,
+                textAlign: "center",
+                color: "white",
+                backgroundColor: "#454545",
               }}
             >
               {item?.testName}
             </Text>
             {item?.resultData?.length > 0 &&
               item?.resultData?.map((items, index) => (
-                <View
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    padding: "2",
-                    marginTop: "4px",
-                  }}
-                  key={index}
-                >
-                  <Text
-                    style={{ fontSize: "10", width: "40%", textAlign: "left" }}
-                  >
-                    {items?.testName}
-                  </Text>
-                  <Text
+                <View>
+                  <View
                     style={{
-                      fontSize: "10",
-                      width: "20%",
-                      textAlign: "center",
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      padding: "2",
+                      marginTop: "4px",
                     }}
+                    key={index}
                   >
-                    {items?.result}
-                  </Text>
-                  <Text
+                    <Text
+                      style={{
+                        fontSize: "10",
+                        width: "40%",
+                        textAlign: "left",
+                        fontFamily: "Roboto",
+                        fontWeight: `${items?.bold === true ? "bold" : ""}`,
+                        textDecoration:
+                          items?.underline === true ? "underline" : "",
+                        fontStyle: items?.italic ? "italic" : "normal",
+                      }}
+                    >
+                      {items?.testName}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: "10",
+                        width: "20%",
+                        textAlign: "center",
+                      }}
+                    >
+                      {items?.result}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: "10",
+                        width: "20%",
+                        textAlign: "center",
+                      }}
+                    >
+                      {items?.unit}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: "10",
+                        width: "20%",
+                        textAlign: "center",
+                      }}
+                    >
+                      {(items?.normalRanges && items?.normalRanges) ||
+                        (items?.testRanges && items?.testRanges) ||
+                        ""}
+                    </Text>
+                  </View>
+                  {items?.remarks && (
+                    <View
+                      style={{
+                        marginLeft: 8,
+                        display: "flex",
+                        flexDirection: "row",
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontFamily: "Roboto",
+                          textDecoration: "underline",
+                          fontWeight: "bold",
+                          fontSize: "10px",
+                        }}
+                      >
+                        Remarks:
+                      </Text>
+                      <Text style={{ fontSize: "10px", marginLeft: 5 }}>
+                        {items?.remarks}
+                      </Text>
+                    </View>
+                  )}
+                </View>
+              ))}
+          </View>,
+        ];
+        currentHeight = itemHeight;
+      } else {
+        currentPageContent.push(
+          <View
+            key={index}
+            style={{ border: "1px solid gray", marginTop: 6, paddingBottom: 2 }}
+          >
+            <Text
+              style={{
+                textDecoration: "underline",
+                fontFamily: "Kalam",
+                fontWeight: "bold", // Use "bold" instead of "ultrabold"
+                fontSize: 15,
+                textAlign: "center",
+                color: "white",
+                backgroundColor: "#454545",
+              }}
+            >
+              {item?.testName}
+            </Text>
+            {item?.resultData?.length > 0 &&
+              item?.resultData?.map((items, index) => (
+                <View>
+                  <View
                     style={{
-                      fontSize: "10",
-                      width: "20%",
-                      textAlign: "center",
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      padding: "2",
+                      marginTop: "4px",
                     }}
+                    key={index}
                   >
-                    {items?.unit}
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: "10",
-                      width: "20%",
-                      textAlign: "center",
-                    }}
-                  >
-                    {items?.normalRanges}
-                  </Text>
+                    <Text
+                      style={{
+                        fontSize: "10",
+                        width: "40%",
+                        textAlign: "left",
+                        fontFamily: "Roboto",
+                        fontWeight: `${items?.bold === true ? "bold" : ""}`,
+                        textDecoration:
+                          items?.underline === true ? "underline" : "",
+                        fontStyle: items?.italic ? "italic" : "normal",
+                      }}
+                    >
+                      {items?.testName}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: "10",
+                        width: "20%",
+                        textAlign: "center",
+                      }}
+                    >
+                      {items?.result}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: "10",
+                        width: "20%",
+                        textAlign: "center",
+                      }}
+                    >
+                      {items?.unit}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: "10",
+                        width: "20%",
+                        textAlign: "center",
+                      }}
+                    >
+                      {(items?.normalRanges && items?.normalRanges) ||
+                        (items?.testRanges && items?.testRanges) ||
+                        ""}
+                    </Text>
+                  </View>
+                  {items?.remarks && (
+                    <View
+                      style={{
+                        marginLeft: 8,
+                        display: "flex",
+                        flexDirection: "row",
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontFamily: "Roboto",
+                          textDecoration: "underline",
+                          fontWeight: "bold",
+                          fontSize: "10px",
+                        }}
+                      >
+                        Remarks:
+                      </Text>
+                      <Text style={{ fontSize: "10px", marginLeft: 5 }}>
+                        {items?.remarks}
+                      </Text>
+                    </View>
+                  )}
                 </View>
               ))}
           </View>
@@ -247,7 +425,7 @@ const SubHeader = () => {
         backgroundColor: "#454545",
         color: "white",
         padding: "2",
-        marginTop: "4px",
+        marginTop: "8px",
       }}
     >
       <Text style={{ fontSize: "10", width: "40%", textAlign: "left" }}>
@@ -279,9 +457,8 @@ const Footer = ({ userName }) => (
       <Text>Attendant Sign</Text>
     </View>
     <View style={styles.pageNumber}>
-      <Text>Printed User: {userName}</Text>
+      <Text style={{ fontFamily: "Kalam" }}>Printed User: {userName}</Text>
       <Text
-        style={{ textDecoration: "underline" }}
         render={({ pageNumber, totalPages }) =>
           `Page ${pageNumber} of ${totalPages}`
         }
