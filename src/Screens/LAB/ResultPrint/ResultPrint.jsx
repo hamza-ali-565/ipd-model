@@ -93,97 +93,14 @@ const ResultPrint = () => {
 
   const CheckDataBeforePrint = () => {
     const removeData = printData.filter((item) => item?.testName !== "");
-    setPrintData(removeData);
-    printResultToPdf();
-    console.log("removeData ", removeData);
-    console.log("printData ", printData);
+    // setPrintData(removeData);
+    printResultToPdf(removeData);
+    // console.log("removeData ", removeData);
+    // console.log("printData ", printData);
   };
 
 
-const dataa = [
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
-  { text: "hello" },
 
-]
 
   const printResultToPdf = async (data) => {
     const key = uuidv4();
@@ -195,8 +112,8 @@ const dataa = [
         userName={userData[0]?.userId}
         patientData={patientData}
         labData={labData}
-        // resultData={printData}
-        content={dataa}
+        resultData={data}
+    
       />
     ).toBlob();
 

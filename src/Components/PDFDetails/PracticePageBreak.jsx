@@ -1,16 +1,48 @@
 import React from "react";
-import { Page, Text, View, Document, StyleSheet } from "@react-pdf/renderer";
+import {
+  Page,
+  Text,
+  View,
+  Document,
+  StyleSheet,
+  Font,
+} from "@react-pdf/renderer";
+
+
+Font.register({
+    family: "Roboto",
+    fonts: [
+      { src: require("../../Utils/Fonts/Roboto-Bold.ttf"), fontWeight: "normal" },
+      { src: require("../../Utils/Fonts/Roboto-Bold.ttf"), fontWeight: "bold" },
+    ],
+  });
+  
+  
+
+// Font.register({
+//   family: "Roboto",
+//   src: "https://fonts.gstatic.com/s/roboto/v20/KFOmCnqEu92Fr1Mu4mxP.ttf",
+// });
 
 // Reusable Page Component with Page Break Functionality
-const CustomPage = ({ userName, content, patientData, labData }) => {
+const CustomPage = ({
+  userName,
+
+  patientData,
+  labData,
+  resultData,
+}) => {
+  const content = [{ text: "hello" }];
+
   const pageHeightLimit = 700; // Adjust this based on your requirements
   let currentHeight = 0;
 
   const renderContentWithBreaks = (content) => {
     const pages = [];
     let currentPageContent = [];
+    console.log("Result Data", resultData);
 
-    content.forEach((item, index) => {
+    resultData.forEach((item, index) => {
       const itemHeight = 100; // Example height of each content block, adjust as needed
 
       if (currentHeight + itemHeight > pageHeightLimit) {
@@ -19,16 +51,77 @@ const CustomPage = ({ userName, content, patientData, labData }) => {
           <Page style={styles.page} key={`page-${pages.length}`}>
             <Header />
             <PatDetails patientData={patientData} labData={labData} />
+            <SubHeader />
             <View style={styles.content}>{currentPageContent}</View>
             <Footer userName={userName} />
           </Page>
         );
 
         // Start a new page
-        currentPageContent = [<Text key={index}>{item.text}</Text>];
+        currentPageContent = [<Text key={index}>{item?.testName}</Text>];
         currentHeight = itemHeight;
       } else {
-        currentPageContent.push(<Text key={index}>{item.text}</Text>);
+        currentPageContent.push(
+          <View key={index}>
+            <Text
+              style={{
+                textDecoration: "underline",
+                fontFamily: "Roboto",
+                fontWeight: "bold", // Use "bold" instead of "ultrabold"
+                fontSize: 15,
+                marginTop: 3,
+              }}
+            >
+              {item?.testName}
+            </Text>
+            {item?.resultData?.length > 0 &&
+              item?.resultData?.map((items, index) => (
+                <View
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    padding: "2",
+                    marginTop: "4px",
+                  }}
+                  key={index}
+                >
+                  <Text
+                    style={{ fontSize: "10", width: "40%", textAlign: "left" }}
+                  >
+                    {items?.testName}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: "10",
+                      width: "20%",
+                      textAlign: "center",
+                    }}
+                  >
+                    {items?.result}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: "10",
+                      width: "20%",
+                      textAlign: "center",
+                    }}
+                  >
+                    {items?.unit}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: "10",
+                      width: "20%",
+                      textAlign: "center",
+                    }}
+                  >
+                    {items?.normalRanges}
+                  </Text>
+                </View>
+              ))}
+          </View>
+        );
         currentHeight += itemHeight;
       }
     });
@@ -39,6 +132,7 @@ const CustomPage = ({ userName, content, patientData, labData }) => {
         <Page style={styles.page} key={`page-${pages.length}`}>
           <Header />
           <PatDetails patientData={patientData} labData={labData} />
+          <SubHeader />
           <View style={styles.content}>{currentPageContent}</View>
           <Footer userName={userName} />
         </Page>
@@ -48,7 +142,7 @@ const CustomPage = ({ userName, content, patientData, labData }) => {
     return pages;
   };
 
-  return <Document>{renderContentWithBreaks(content)}</Document>;
+  return <Document>{renderContentWithBreaks(resultData)}</Document>;
 };
 
 // Header Component
@@ -142,6 +236,35 @@ const PatDetails = ({ patientData, labData }) => (
     </View>
   </View>
 );
+
+const SubHeader = () => {
+  return (
+    <View
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        backgroundColor: "#454545",
+        color: "white",
+        padding: "2",
+        marginTop: "4px",
+      }}
+    >
+      <Text style={{ fontSize: "10", width: "40%", textAlign: "left" }}>
+        Test Name
+      </Text>
+      <Text style={{ fontSize: "10", width: "20%", textAlign: "center" }}>
+        Result
+      </Text>
+      <Text style={{ fontSize: "10", width: "20%", textAlign: "center" }}>
+        Unit
+      </Text>
+      <Text style={{ fontSize: "10", width: "20%", textAlign: "center" }}>
+        Ranges
+      </Text>
+    </View>
+  );
+};
 
 // Footer Component
 const Footer = ({ userName }) => (
