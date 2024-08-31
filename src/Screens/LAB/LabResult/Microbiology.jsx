@@ -226,6 +226,7 @@ const Microbiology = () => {
     <div>
       <CenterHeading title={"DEPARTMENT OF MICROBIOLOGY"} />
       <div className="md:grid md:grid-cols-2 md:grid-rows-2">
+
         {/* Patient Detail */}
         <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
           <CenterHeading title={"Patient Detail"} />
@@ -299,6 +300,7 @@ const Microbiology = () => {
             />
           </div>
         </div>
+
         {/* test detail */}
         <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
           <CenterHeading title={"Test Detail"} />
@@ -314,6 +316,7 @@ const Microbiology = () => {
             ))}
           </div>
         </div>
+        
         {/* test entry */}
         <div className="md:col-span-2 bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
           <CenterHeading title={"Test Entry"} />
