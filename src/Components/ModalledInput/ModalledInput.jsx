@@ -19,9 +19,10 @@ const ModalledInput = ({
           name=""
           id=""
           value={TextAreaValue}
+          placeholder="Microscopy"
           rows={3}
           cols={40}
-          className="bg-transparent border-2 border-black rounded-lg"
+          className="bg-transparent border-2 border-black rounded-lg p-1"
           onChange={onChangeTextArea}
         />
         <SpecialityModal title={"MODAL"} onClick={onClickModal} />
