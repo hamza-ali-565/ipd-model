@@ -8,6 +8,7 @@ import Loader from "../../../Components/Modal/Loader";
 import moment from "moment/moment";
 import ButtonDis from "../../../Components/Button/ButtonDis";
 import SpecimenModal from "../../../Components/Modal/SpecimenModal";
+import ModalledInput from "../../../Components/ModalledInput/ModalledInput";
 
 const Microbiology = () => {
   const [labNo, setLabNo] = useState("");
@@ -20,6 +21,7 @@ const Microbiology = () => {
   const [testName, setTestName] = useState("");
   const [specimen, setSpecimen] = useState(null);
   const [znStain, setZnStain] = useState(null);
+  const [microscopy, setMicroscopy] = useState([{}]);
 
   const url = useSelector((items) => items?.url);
 
@@ -175,6 +177,51 @@ const Microbiology = () => {
     }
   };
 
+  // AddNewLine
+  const addAndRemove = (value, index) => {
+    if (value === "Add") {
+      setMicroscopy((prev) => [...prev, {}]);
+      return;
+    } else if (value === "Less") {
+      const removeLine = microscopy.filter(
+        (_, indexOfItem) => indexOfItem !== index
+      );
+      setMicroscopy(removeLine);
+
+      return;
+    }
+  };
+
+  const updateMicroscopy = (data, index, key) => {
+    let response;
+    if (key === "microscopy") {
+      response = microscopy.map((items, indexOfItem) => {
+        if (index === indexOfItem) {
+          return {
+            ...items,
+            microscopy: data?.speciality ? data?.speciality : data,
+          };
+        }
+        return items;
+      });
+      setMicroscopy(response);
+      return;
+    } else {
+      response = microscopy.map((items, indexOfItem) => {
+        if (index === indexOfItem) {
+          return {
+            ...items,
+            result: data,
+          };
+        }
+        return items;
+      });
+      setMicroscopy(response);
+      console.log("Response ", response);
+      return;
+    }
+  };
+
   return (
     <div>
       <CenterHeading title={"DEPARTMENT OF MICROBIOLOGY"} />
@@ -270,35 +317,76 @@ const Microbiology = () => {
         {/* test entry */}
         <div className="md:col-span-2 bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
           <CenterHeading title={"Test Entry"} />
-          <div className="flex justify-center space-x-2 mt-3">
-            <SpecimenModal
-              title={"SPECIMEN"}
-              onClick={(data) => setSpecimen(data)}
-              type={"Specimen"}
-            />
-            <SpecimenModal
-              title={"ZN STAIN"}
-              onClick={(data) => setZnStain(data)}
-              type={"ZNStain"}
-            />
-          </div>
-          <div className="flex justify-around bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
-            <LabeledInput
-              label={"Specimen"}
-              value={(specimen && specimen?.specimen) || ""}
-              onChange={(e) =>
-                updateSpec(e.target.value.toUpperCase(), "Specimen")
-              }
-            />
-            <LabeledInput
-              label={"ZNStain"}
-              onChange={(e) =>
-                updateSpec(e.target.value.toUpperCase(), "ZNStain")
-              }
-              value={(znStain && znStain?.specimen) || ""}
-            />
-          </div>
 
+          {/* SPECIMEN AND ZNSTAIN */}
+          <div className="md:col-span-2 bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
+            <div className="flex justify-center space-x-2 mt-3">
+              <SpecimenModal
+                title={"SPECIMEN"}
+                onClick={(data) => setSpecimen(data)}
+                type={"Specimen"}
+              />
+              <SpecimenModal
+                title={"ZN STAIN"}
+                onClick={(data) => setZnStain(data)}
+                type={"ZNStain"}
+              />
+            </div>
+            <div className="flex justify-around bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
+              <LabeledInput
+                label={"Specimen"}
+                value={(specimen && specimen?.specimen) || ""}
+                onChange={(e) =>
+                  updateSpec(e.target.value.toUpperCase(), "Specimen")
+                }
+              />
+              <LabeledInput
+                label={"ZNStain"}
+                onChange={(e) =>
+                  updateSpec(e.target.value.toUpperCase(), "ZNStain")
+                }
+                value={(znStain && znStain?.specimen) || ""}
+              />
+            </div>
+          </div>
+          {/* MICROSCOPY */}
+          <div className="md:col-span-2 bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
+            <CenterHeading title={"MICROSCOPY"} />
+            <div className="flex space-x-2 items-center justify-center mt-5">
+              <ButtonDis title={"Add"} onClick={() => addAndRemove("Add")} />
+            </div>
+
+            {microscopy.length > 0 &&
+              microscopy.map((items, index) => (
+                <div className="mt-2">
+                  <ModalledInput
+                    onClickAdd={() => addAndRemove("Add")}
+                    onClickLess={() => addAndRemove("Less", index)}
+                    onClickModal={(data) =>
+                      updateMicroscopy(data, index, "microscopy")
+                    }
+                    TextAreaValue={
+                      (items?.microscopy && items?.microscopy) || ""
+                    }
+                    inputValue={(items?.result && items?.result) || ""}
+                    onChangeTextArea={(e) =>
+                      updateMicroscopy(
+                        e.target.value.toUpperCase(),
+                        index,
+                        "microscopy"
+                      )
+                    }
+                    onChangeInput={(e) =>
+                      updateMicroscopy(
+                        e.target.value.toUpperCase(),
+                        index,
+                        "result"
+                      )
+                    }
+                  />
+                </div>
+              ))}
+          </div>
           {/* Header */}
 
           <div className="flex justify-center space-x-2 mt-5">
