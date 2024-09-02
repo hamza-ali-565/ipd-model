@@ -34,6 +34,7 @@ export default function ServiceModal({
   const [data, setData] = useState([]);
   const [toggle, setToggle] = useState(false);
   const [serviceDetails, setServiceDetails] = useState([]);
+  const [checkDis, setCheckDis] = useState(false);
   const inputRef = useRef(null); // Reference for the input element
 
   React.useEffect(() => {
@@ -119,6 +120,7 @@ export default function ServiceModal({
     try {
       if (serviceDetails.length <= 0)
         throw new Error("PLEASE SELECT SERVICE !!!");
+      setCheckDis(true);
       const response = await axios.post(
         `${url}/internalservice`,
         {
@@ -130,9 +132,11 @@ export default function ServiceModal({
       console.log("response of createService", response.data);
       handleClose();
       SuccessAlert({ text: "Service added successfully", timer: 2000 });
+      setCheckDis(false);
     } catch (error) {
       console.log("Error of createService", error);
       ErrorAlert({ text: error.message, timer: 2000 });
+      setCheckDis(false);
     }
   };
 
@@ -237,7 +241,11 @@ export default function ServiceModal({
                       </div>
                     ))}
                   <div className="flex justify-center space-x-2 mt-2">
-                    <ButtonDis title={"Save"} onClick={createService} />
+                    <ButtonDis
+                      title={(checkDis && "Please Wait ...") || "Save"}
+                      onClick={createService}
+                      disabled={checkDis}
+                    />
                     <ButtonDis
                       title={"Refresh"}
                       onClick={() =>

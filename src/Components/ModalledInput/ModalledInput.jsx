@@ -1,6 +1,6 @@
 import React from "react";
-import SpecialityModal from "../Modal/SpecialityModal";
 import ButtonDis from "../Button/ButtonDis";
+import SpecimenModal from "../Modal/SpecimenModal";
 
 const ModalledInput = ({
   onChangeTextArea,
@@ -10,6 +10,8 @@ const ModalledInput = ({
   onClickModal,
   TextAreaValue,
   inputValue,
+  type,
+  modalName,
 }) => {
   return (
     <div className="flex justify-around items-center">
@@ -25,7 +27,7 @@ const ModalledInput = ({
           className="bg-transparent border-2 border-black rounded-lg p-1"
           onChange={onChangeTextArea}
         />
-        <SpecialityModal title={"MODAL"} onClick={onClickModal} />
+        <SpecimenModal title={modalName} onClick={onClickModal} type={type} />
       </div>
       <div className="flex space-x-2">
         <input

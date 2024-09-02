@@ -282,7 +282,7 @@ const RunningPDF = ({
             </Text>
             <Text style={{ fontSize: "10", width: "25%", textAlign: "center" }}>
               {" "}
-              Data{" "}
+              Date{" "}
             </Text>
             <Text style={{ fontSize: "10", width: "25%", textAlign: "center" }}>
               {" "}

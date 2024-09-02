@@ -133,7 +133,17 @@ export default function SpecimenModal({ onClick, title, type }) {
                   secondPage === false ? "text-blue-700 border-blue-700" : ""
                 }`}
               >
-                PICK SPECIMEN
+                {type === "Specimen"
+                  ? "PICK SPECIMEN"
+                  : type === "ZNStain"
+                  ? "PICK ZNSTAIN"
+                  : type === "Microscopy"
+                  ? "PICK Microscopy"
+                  : type === "Culture"
+                  ? "PICK CULTURE"
+                  : type === "GramStain"
+                  ? "PICK GRAM STAIN"
+                  : ""}
               </p>
               <p
                 onClick={() => setSecondPage(true)}
@@ -141,7 +151,17 @@ export default function SpecimenModal({ onClick, title, type }) {
                   secondPage === true ? "text-blue-700 border-blue-700" : ""
                 }`}
               >
-                CREATE SPECIMEN
+                {type === "Specimen"
+                  ? "CREATE SPECIMEN"
+                  : type === "ZNStain"
+                  ? "CREATE ZNStain"
+                  : type === "Microscopy"
+                  ? "CREATE Microscopy"
+                  : type === "Culture"
+                  ? "CREATE Culture"
+                  : type === "GramStain"
+                  ? "CREATE Gram Stain"
+                  : ""}
               </p>
             </div>
           </div>
@@ -153,7 +173,19 @@ export default function SpecimenModal({ onClick, title, type }) {
                 <div className="container mx-auto mt-3 cursor-pointer">
                   <div className="grid grid-cols-2 text-xs justify-items-center items-center h-12 border border-gray-300">
                     <p className="font-bold">Serial No</p>
-                    <p className="font-bold">Specimen Name</p>
+                    <p className="font-bold">
+                      {type === "Specimen"
+                        ? "SPECIMEN Name"
+                        : type === "ZNStain"
+                        ? "ZNStain Name"
+                        : type === "Microscopy"
+                        ? "Microscopy Name"
+                        : type === "Culture"
+                        ? "Culture Name"
+                        : type === "GramStain"
+                        ? "Gram Stain Name"
+                        : ""}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -183,7 +215,19 @@ export default function SpecimenModal({ onClick, title, type }) {
               <div className="max-h-96">
                 <div className="container mx-auto mt-3 cursor-pointer">
                   <div className="grid grid-cols-1 text-xs justify-items-center items-center h-12 border border-gray-300">
-                    <p className="font-bold">CREATE SPECIMEN</p>
+                    <p className="font-bold">
+                      {type === "Specimen"
+                        ? "CREATE SPECIMEN"
+                        : type === "ZNStain"
+                        ? "CREATE ZNStain"
+                        : type === "Microscopy"
+                        ? "CREATE Microscopy"
+                        : type === "Culture"
+                        ? "CREATE Culture"
+                        : type === "GramStain"
+                        ? "CREATE Gram Stain"
+                        : ""}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -196,8 +240,8 @@ export default function SpecimenModal({ onClick, title, type }) {
                 >
                   <div className="flex flex-col items-center">
                     <LabeledInput
-                      label={"INPUT SPECIMENT NAME"}
-                      placeholder={"INPUT SPECIMENT NAME"}
+                      label={`INPUT ${type} NAME`}
+                      placeholder={`INPUT ${type} NAME`}
                       onChange={(e) =>
                         setSpecimen(e.target.value.toUpperCase())
                       }

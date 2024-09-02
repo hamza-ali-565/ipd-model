@@ -22,6 +22,8 @@ const Microbiology = () => {
   const [specimen, setSpecimen] = useState(null);
   const [znStain, setZnStain] = useState(null);
   const [microscopy, setMicroscopy] = useState([{}]);
+  const [culture, setCulture] = useState([{}]);
+  const [gramStain, setGramStain] = useState([{}]);
 
   const url = useSelector((items) => items?.url);
 
@@ -178,227 +180,385 @@ const Microbiology = () => {
   };
 
   // AddNewLine
-  const addAndRemove = (value, index) => {
-    if (value === "Add") {
-      setMicroscopy((prev) => [...prev, {}]);
+  const addAndRemove = (value, index, key) => {
+    if (key === "microscopy") {
+      if (value === "Add") {
+        setMicroscopy((prev) => [...prev, {}]);
+        return;
+      } else if (value === "Less") {
+        if (microscopy.length === 1) return;
+        const removeLine = microscopy.filter(
+          (_, indexOfItem) => indexOfItem !== index
+        );
+        setMicroscopy(removeLine);
+      }
       return;
-    } else if (value === "Less") {
-      const removeLine = microscopy.filter(
-        (_, indexOfItem) => indexOfItem !== index
-      );
-      setMicroscopy(removeLine);
-
+    } else if (key === "culture") {
+      if (value === "Add") {
+        setCulture((prev) => [...prev, {}]);
+        return;
+      } else if (value === "Less") {
+        if (culture.length === 1) return;
+        const removeLine = culture.filter(
+          (_, indexOfItem) => indexOfItem !== index
+        );
+        setCulture(removeLine);
+      }
+      return;
+    } else if (key === "GramStain") {
+      if (value === "Add") {
+        setGramStain((prev) => [...prev, {}]);
+        return;
+      } else if (value === "Less") {
+        if (gramStain.length === 1) return;
+        const removeLine = gramStain.filter(
+          (_, indexOfItem) => indexOfItem !== index
+        );
+        setGramStain(removeLine);
+      }
       return;
     }
   };
 
-  const updateMicroscopy = (data, index, key) => {
+  const updateMicroscopy = (data, index, key, mainKey) => {
     let response;
-    if (key === "microscopy") {
-      response = microscopy.map((items, indexOfItem) => {
-        if (index === indexOfItem) {
-          return {
-            ...items,
-            microscopy: data?.speciality ? data?.speciality : data,
-          };
-        }
-        return items;
-      });
-      setMicroscopy(response);
-      return;
-    } else {
-      response = microscopy.map((items, indexOfItem) => {
-        if (index === indexOfItem) {
-          return {
-            ...items,
-            result: data,
-          };
-        }
-        return items;
-      });
-      setMicroscopy(response);
-      console.log("Response ", response);
-      return;
+    if (mainKey === "microscopy") {
+      if (key === "microscopy") {
+        response = microscopy.map((items, indexOfItem) => {
+          if (index === indexOfItem) {
+            return {
+              ...items,
+              microscopy: data?.specimen ? data?.specimen : data,
+            };
+          }
+          return items;
+        });
+        setMicroscopy(response);
+        return;
+      } else {
+        response = microscopy.map((items, indexOfItem) => {
+          if (index === indexOfItem) {
+            return {
+              ...items,
+              result: data,
+            };
+          }
+          return items;
+        });
+        setMicroscopy(response);
+        console.log("Response ", response);
+        return;
+      }
+    } else if (mainKey === "culture") {
+      console.log("data ", data);
+
+      if (key === "culture") {
+        response = culture.map((items, indexOfItem) => {
+          if (index === indexOfItem) {
+            return {
+              ...items,
+              culture: data?.specimen ? data?.specimen : data,
+            };
+          }
+          return items;
+        });
+        setCulture(response);
+        return;
+      } else {
+        response = culture.map((items, indexOfItem) => {
+          if (index === indexOfItem) {
+            return {
+              ...items,
+              result: data,
+            };
+          }
+          return items;
+        });
+        setCulture(response);
+        console.log("Response ", response);
+        return;
+      }
+    }else if (mainKey === "GramStain") {
+      if (key === "GramStain") {
+        response = gramStain.map((items, indexOfItem) => {
+          if (index === indexOfItem) {
+            return {
+              ...items,
+              gramStain: data?.specimen ? data?.specimen : data,
+            };
+          }
+          return items;
+        });
+        setGramStain(response);
+        return;
+      } else {
+        response = gramStain.map((items, indexOfItem) => {
+          if (index === indexOfItem) {
+            return {
+              ...items,
+              result: data,
+            };
+          }
+          return items;
+        });
+        setGramStain(response);
+        console.log("Response ", response);
+        return;
+      }
     }
   };
 
   return (
     <div>
       <CenterHeading title={"DEPARTMENT OF MICROBIOLOGY"} />
-      <div className="md:grid md:grid-cols-2 md:grid-rows-2">
 
-        {/* Patient Detail */}
-        <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
-          <CenterHeading title={"Patient Detail"} />
-          <form
-            className="flex justify-center my-2"
-            onSubmit={(e) => getDetails(e)}
-          >
-            <LabeledInput
-              label={"Lab No"}
-              placeholder={"Enter Lab No and press ENTER"}
-              onChange={(e) => setLabNo(e.target.value)}
-              value={labNo}
+      {/* Patient Detail */}
+      <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
+        <CenterHeading title={"Patient Detail"} />
+        <form
+          className="flex justify-center my-2"
+          onSubmit={(e) => getDetails(e)}
+        >
+          <LabeledInput
+            label={"Lab No"}
+            placeholder={"Enter Lab No and press ENTER"}
+            onChange={(e) => setLabNo(e.target.value)}
+            value={labNo}
+          />
+        </form>
+        <div className="flex flex-col items-center space-y-2">
+          <LabeledInput
+            label={"Patient Name"}
+            placeholder={"Lab No"}
+            disabled
+            value={
+              patientData.length > 0
+                ? `${patientData[0].patientType} ${patientData[0].patientName}  ${patientData[0].relativeType} ${patientData[0].relativeName}`
+                : ""
+            }
+          />
+          <LabeledInput
+            label={"Phone No."}
+            placeholder={"Phone No"}
+            disabled
+            value={(patientData.length > 0 && patientData[0].cellNo) || ""}
+          />
+          <LabeledInput
+            label={"Lab No"}
+            placeholder={"Lab No"}
+            disabled
+            value={(labData.length > 0 && labData[0].labNo) || ""}
+          />
+          <LabeledInput
+            label={"Mr No"}
+            placeholder={"Mr No"}
+            disabled
+            value={(patientData.length > 0 && patientData[0].MrNo) || ""}
+          />
+          <LabeledInput
+            label={"Booking Date"}
+            placeholder={"Booking Date"}
+            disabled
+            value={(labData.length > 0 && labData[0].createdOn) || ""}
+          />
+          <LabeledInput
+            label={"Gender"}
+            placeholder={"Gender"}
+            disabled
+            value={patientData?.length > 0 ? patientData[0]?.gender : ""}
+          />
+          <LabeledInput
+            label={"Age"}
+            placeholder={"Age"}
+            disabled
+            value={
+              patientData.length > 0
+                ? `${
+                    patientData[0]?.ageYear ? patientData[0]?.ageYear : "0"
+                  } Years ${
+                    patientData[0]?.ageMonth ? patientData[0]?.ageMonth : "0"
+                  } Months ${
+                    patientData[0]?.ageDay ? patientData[0]?.ageDay : "0"
+                  } Days`
+                : ""
+            }
+          />
+        </div>
+      </div>
+
+      {/* test detail */}
+      <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
+        <CenterHeading title={"Test Detail"} />
+        <div className="flex flex-col items-center space-y-2 mt-3">
+          {labResultData.map((items, index) => (
+            <div key={index}>
+              <LabeledInput
+                label={"Test Name"}
+                value={`${items?.testName} ${items?.thisIs}`}
+                disabled
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* test entry */}
+      <div className="md:col-span-2 bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
+        <CenterHeading title={"Test Entry"} />
+
+        {/* SPECIMEN AND ZNSTAIN */}
+        <div className="md:col-span-2 bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
+          <div className="flex justify-center space-x-2 mt-3">
+            <SpecimenModal
+              title={"SPECIMEN"}
+              onClick={(data) => setSpecimen(data)}
+              type={"Specimen"}
             />
-          </form>
-          <div className="flex flex-col items-center space-y-2">
+            <SpecimenModal
+              title={"ZN STAIN"}
+              onClick={(data) => setZnStain(data)}
+              type={"ZNStain"}
+            />
+          </div>
+          <div className="flex justify-around bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
             <LabeledInput
-              label={"Patient Name"}
-              placeholder={"Lab No"}
-              disabled
-              value={
-                patientData.length > 0
-                  ? `${patientData[0].patientType} ${patientData[0].patientName}  ${patientData[0].relativeType} ${patientData[0].relativeName}`
-                  : ""
+              label={"Specimen"}
+              value={(specimen && specimen?.specimen) || ""}
+              onChange={(e) =>
+                updateSpec(e.target.value.toUpperCase(), "Specimen")
               }
             />
             <LabeledInput
-              label={"Phone No."}
-              placeholder={"Phone No"}
-              disabled
-              value={(patientData.length > 0 && patientData[0].cellNo) || ""}
-            />
-            <LabeledInput
-              label={"Lab No"}
-              placeholder={"Lab No"}
-              disabled
-              value={(labData.length > 0 && labData[0].labNo) || ""}
-            />
-            <LabeledInput
-              label={"Mr No"}
-              placeholder={"Mr No"}
-              disabled
-              value={(patientData.length > 0 && patientData[0].MrNo) || ""}
-            />
-            <LabeledInput
-              label={"Booking Date"}
-              placeholder={"Booking Date"}
-              disabled
-              value={(labData.length > 0 && labData[0].createdOn) || ""}
-            />
-            <LabeledInput
-              label={"Gender"}
-              placeholder={"Gender"}
-              disabled
-              value={patientData?.length > 0 ? patientData[0]?.gender : ""}
-            />
-            <LabeledInput
-              label={"Age"}
-              placeholder={"Age"}
-              disabled
-              value={
-                patientData.length > 0
-                  ? `${
-                      patientData[0]?.ageYear ? patientData[0]?.ageYear : "0"
-                    } Years ${
-                      patientData[0]?.ageMonth ? patientData[0]?.ageMonth : "0"
-                    } Months ${
-                      patientData[0]?.ageDay ? patientData[0]?.ageDay : "0"
-                    } Days`
-                  : ""
+              label={"ZNStain"}
+              onChange={(e) =>
+                updateSpec(e.target.value.toUpperCase(), "ZNStain")
               }
+              value={(znStain && znStain?.specimen) || ""}
             />
           </div>
         </div>
+        {/* MICROSCOPY */}
+        <div className="md:col-span-2 bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
+          <CenterHeading title={"MICROSCOPY"} />
 
-        {/* test detail */}
-        <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
-          <CenterHeading title={"Test Detail"} />
-          <div className="flex flex-col items-center space-y-2 mt-3">
-            {labResultData.map((items, index) => (
-              <div key={index}>
-                <LabeledInput
-                  label={"Test Name"}
-                  value={`${items?.testName} ${items?.thisIs}`}
-                  disabled
+          {microscopy.length > 0 &&
+            microscopy.map((items, index) => (
+              <div className="mt-2">
+                <ModalledInput
+                  type={"Microscopy"}
+                  onClickAdd={() => addAndRemove("Add", index, "microscopy")}
+                  onClickLess={() => addAndRemove("Less", index, "microscopy")}
+                  onClickModal={(data) =>
+                    updateMicroscopy(data, index, "microscopy", "microscopy")
+                  }
+                  modalName={"Microscopy"}
+                  TextAreaValue={(items?.microscopy && items?.microscopy) || ""}
+                  inputValue={(items?.result && items?.result) || ""}
+                  onChangeTextArea={(e) =>
+                    updateMicroscopy(
+                      e.target.value.toUpperCase(),
+                      index,
+                      "microscopy",
+                      "microscopy"
+                    )
+                  }
+                  onChangeInput={(e) =>
+                    updateMicroscopy(
+                      e.target.value.toUpperCase(),
+                      index,
+                      "result",
+                      "microscopy"
+                    )
+                  }
                 />
               </div>
             ))}
-          </div>
         </div>
-        
-        {/* test entry */}
+
+        {/* Culture */}
         <div className="md:col-span-2 bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
-          <CenterHeading title={"Test Entry"} />
+          <CenterHeading title={"CULTURE"} />
 
-          {/* SPECIMEN AND ZNSTAIN */}
-          <div className="md:col-span-2 bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
-            <div className="flex justify-center space-x-2 mt-3">
-              <SpecimenModal
-                title={"SPECIMEN"}
-                onClick={(data) => setSpecimen(data)}
-                type={"Specimen"}
-              />
-              <SpecimenModal
-                title={"ZN STAIN"}
-                onClick={(data) => setZnStain(data)}
-                type={"ZNStain"}
-              />
-            </div>
-            <div className="flex justify-around bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
-              <LabeledInput
-                label={"Specimen"}
-                value={(specimen && specimen?.specimen) || ""}
-                onChange={(e) =>
-                  updateSpec(e.target.value.toUpperCase(), "Specimen")
-                }
-              />
-              <LabeledInput
-                label={"ZNStain"}
-                onChange={(e) =>
-                  updateSpec(e.target.value.toUpperCase(), "ZNStain")
-                }
-                value={(znStain && znStain?.specimen) || ""}
-              />
-            </div>
-          </div>
-          {/* MICROSCOPY */}
-          <div className="md:col-span-2 bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
-            <CenterHeading title={"MICROSCOPY"} />
-            <div className="flex space-x-2 items-center justify-center mt-5">
-              <ButtonDis title={"Add"} onClick={() => addAndRemove("Add")} />
-            </div>
-
-            {microscopy.length > 0 &&
-              microscopy.map((items, index) => (
-                <div className="mt-2">
-                  <ModalledInput
-                    onClickAdd={() => addAndRemove("Add")}
-                    onClickLess={() => addAndRemove("Less", index)}
-                    onClickModal={(data) =>
-                      updateMicroscopy(data, index, "microscopy")
-                    }
-                    TextAreaValue={
-                      (items?.microscopy && items?.microscopy) || ""
-                    }
-                    inputValue={(items?.result && items?.result) || ""}
-                    onChangeTextArea={(e) =>
-                      updateMicroscopy(
-                        e.target.value.toUpperCase(),
-                        index,
-                        "microscopy"
-                      )
-                    }
-                    onChangeInput={(e) =>
-                      updateMicroscopy(
-                        e.target.value.toUpperCase(),
-                        index,
-                        "result"
-                      )
-                    }
-                  />
-                </div>
-              ))}
-          </div>
-          {/* Header */}
-
-          <div className="flex justify-center space-x-2 mt-5">
-            <ButtonDis title={"Save"} onClick={submitResult} />
-            <ButtonDis title={"Refresh"} onClick={resetDetails} />
-          </div>
+          {culture.length > 0 &&
+            culture.map((items, index) => (
+              <div className="mt-2">
+                <ModalledInput
+                  type={"Culture"}
+                  onClickAdd={() => addAndRemove("Add", index, "culture")}
+                  onClickLess={() => addAndRemove("Less", index, "culture")}
+                  onClickModal={(data) =>
+                    updateMicroscopy(data, index, "culture", "culture")
+                  }
+                  modalName={"Culture"}
+                  TextAreaValue={(items?.culture && items?.culture) || ""}
+                  inputValue={(items?.result && items?.result) || ""}
+                  onChangeTextArea={(e) =>
+                    updateMicroscopy(
+                      e.target.value.toUpperCase(),
+                      index,
+                      "culture",
+                      "culture"
+                    )
+                  }
+                  onChangeInput={(e) =>
+                    updateMicroscopy(
+                      e.target.value.toUpperCase(),
+                      index,
+                      "result",
+                      "culture"
+                    )
+                  }
+                />
+              </div>
+            ))}
         </div>
-        <Loader onClick={open} title={"Please Wait ..."} />
+
+        {/* Gram Stain */}
+        <div className="md:col-span-2 bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
+          <CenterHeading title={"GRAM STAIN"} />
+
+          {gramStain.length > 0 &&
+            gramStain.map((items, index) => (
+              <div className="mt-2">
+                <ModalledInput
+                  type={"GramStain"}
+                  onClickAdd={() => addAndRemove("Add", index, "GramStain")}
+                  onClickLess={() => addAndRemove("Less", index, "GramStain")}
+                  onClickModal={(data) =>
+                    updateMicroscopy(data, index, "GramStain", "GramStain")
+                  }
+
+                  modalName={"Gram Stain"}
+                  TextAreaValue={(items?.gramStain && items?.gramStain) || ""}
+                  inputValue={(items?.result && items?.result) || ""}
+                  onChangeTextArea={(e) =>
+                    updateMicroscopy(
+                      e.target.value.toUpperCase(),
+                      index,
+                     "GramStain", "GramStain"
+                    )
+                  }
+                  onChangeInput={(e) =>
+                    updateMicroscopy(
+                      e.target.value.toUpperCase(),
+                      index,
+                      "result",
+                      "GramStain",
+                    )
+                  }
+                />
+              </div>
+            ))}
+        </div>
+
+        {/* Header */}
+
+        <div className="flex justify-center space-x-2 mt-5">
+          <ButtonDis title={"Save"} onClick={submitResult} />
+          <ButtonDis title={"Refresh"} onClick={resetDetails} />
+        </div>
       </div>
+      <Loader onClick={open} title={"Please Wait ..."} />
     </div>
   );
 };
