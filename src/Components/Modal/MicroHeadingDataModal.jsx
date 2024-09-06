@@ -23,7 +23,7 @@ const style = {
   overflowY: "auto", // Enable vertical scrolling
 };
 
-export default function SpecimenModal({ onClick, title, type }) {
+export default function MicroHeadingDataModal({ onClick, title, type }) {
   const [open, setOpen] = useState(false);
   const [data, setData] = useState([]);
   const [rotation, setRotation] = useState(false);
@@ -60,14 +60,12 @@ export default function SpecimenModal({ onClick, title, type }) {
     );
     setData(filteredData);
   };
+
   const getData = async () => {
     try {
-      const response = await axios.get(
-        `${url}/lab/labSpecimenDisp?type=${type}`,
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axios.get(`${url}/lab/labMicroData`, {
+        withCredentials: true,
+      });
       setData(response?.data?.data?.data);
     } catch (error) {
       console.log("error of getData", error);
@@ -84,11 +82,11 @@ export default function SpecimenModal({ onClick, title, type }) {
       if (specimen === "") return setMessage("Please Enter Value");
       setRotation(true);
       const response = await axios.post(
-        `${url}/lab/labSpecimen`,
-        { specimen, type },
+        `${url}/lab/labMicroDataParent`,
+        { parentName: specimen },
         { withCredentials: true }
       );
-      console.log("response of pushSpecimen", response.data?.data);
+      console.log("response of Parent Name", response.data?.data);
       setSpecimen("");
       setMessage("DATA CREATED SUCCESSFULLY");
       setRotation(false);
@@ -134,19 +132,7 @@ export default function SpecimenModal({ onClick, title, type }) {
                   secondPage === false ? "text-blue-700 border-blue-700" : ""
                 }`}
               >
-                {type === "Specimen"
-                  ? "PICK SPECIMEN"
-                  : type === "ZNStain"
-                  ? "PICK ZNSTAIN"
-                  : type === "Microscopy"
-                  ? "PICK Microscopy"
-                  : type === "Culture"
-                  ? "PICK CULTURE"
-                  : type === "GramStain"
-                  ? "PICK GRAM STAIN"
-                  : type === "Organism"
-                  ? "PICK Organism"
-                  : ""}
+                Pick Microscopy Heading
               </p>
               <p
                 onClick={() => setSecondPage(true)}
@@ -154,19 +140,7 @@ export default function SpecimenModal({ onClick, title, type }) {
                   secondPage === true ? "text-blue-700 border-blue-700" : ""
                 }`}
               >
-                {type === "Specimen"
-                  ? "CREATE SPECIMEN"
-                  : type === "ZNStain"
-                  ? "CREATE ZNStain"
-                  : type === "Microscopy"
-                  ? "CREATE Microscopy"
-                  : type === "Culture"
-                  ? "CREATE Culture"
-                  : type === "GramStain"
-                  ? "CREATE Gram Stain"
-                  : type === "Organism"
-                  ? "CREATE Organism"
-                  : ""}
+                CREATE MICROSCOPY HEADING
               </p>
             </div>
           </div>
@@ -178,21 +152,7 @@ export default function SpecimenModal({ onClick, title, type }) {
                 <div className="container mx-auto mt-3 cursor-pointer">
                   <div className="grid grid-cols-2 text-xs justify-items-center items-center h-12 border border-gray-300">
                     <p className="font-bold">Serial No</p>
-                    <p className="font-bold">
-                      {type === "Specimen"
-                        ? "SPECIMEN Name"
-                        : type === "ZNStain"
-                        ? "ZNStain Name"
-                        : type === "Microscopy"
-                        ? "Microscopy Name"
-                        : type === "Culture"
-                        ? "Culture Name"
-                        : type === "GramStain"
-                        ? "Gram Stain Name"
-                        : type === "Organism"
-                        ? "Gram Organism"
-                        : ""}
-                    </p>
+                    <p className="font-bold">Microscopy Heading</p>
                   </div>
                 </div>
               </div>
@@ -207,7 +167,7 @@ export default function SpecimenModal({ onClick, title, type }) {
                       >
                         <div className="grid grid-cols-2 text-xs justify-items-center items-center h-8 border border-gray-300 cursor-pointer hover:text-blue-600 hover:font-bold transition duration-100 ease-in">
                           <p className="">{index + 1}</p>
-                          <p className="">{items?.specimen}</p>
+                          <p className="">{items?.parentName}</p>
                         </div>
                       </div>
                     </div>
@@ -223,19 +183,7 @@ export default function SpecimenModal({ onClick, title, type }) {
                 <div className="container mx-auto mt-3 cursor-pointer">
                   <div className="grid grid-cols-1 text-xs justify-items-center items-center h-12 border border-gray-300">
                     <p className="font-bold">
-                      {type === "Specimen"
-                        ? "CREATE SPECIMEN"
-                        : type === "ZNStain"
-                        ? "CREATE ZNStain"
-                        : type === "Microscopy"
-                        ? "CREATE Microscopy"
-                        : type === "Culture"
-                        ? "CREATE Culture"
-                        : type === "GramStain"
-                        ? "CREATE Gram Stain"
-                        : type === "Organism"
-                        ? "CREATE Organism"
-                        : ""}
+                     CREATE Microbiology Heading
                     </p>
                   </div>
                 </div>

@@ -80,6 +80,7 @@ import Parasitology from "./Screens/LAB/LabResult/Parasitology";
 import ChemicalPath from "./Screens/LAB/LabResult/ChemicalPath";
 import ResultPrint from "./Screens/LAB/ResultPrint/ResultPrint";
 import Microbiology from "./Screens/LAB/LabResult/Microbiology";
+import MicrobiologyRef from "./Screens/LAB/MASTER/MicrobiologyRef.lab";
 
 function App() {
   const dispatch = useDispatch();
@@ -267,6 +268,7 @@ function App() {
                 <Route path="test" element={<LabTest />} />
                 <Route path="group" element={<LabGroup />} />
                 <Route path="labcharges" element={<LabCharges />} />
+                <Route path="microbologyReferences" element={<MicrobiologyRef />} />
               </Route>
               <Route
                 path="lab/transaction/*"

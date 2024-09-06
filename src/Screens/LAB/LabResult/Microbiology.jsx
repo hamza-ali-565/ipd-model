@@ -24,6 +24,14 @@ const Microbiology = () => {
   const [microscopy, setMicroscopy] = useState([{}]);
   const [culture, setCulture] = useState([{}]);
   const [gramStain, setGramStain] = useState([{}]);
+  const [organism, setOrganism] = useState([
+    { organism: "" },
+    { organism: "" },
+    { organism: "" },
+    { organism: "" },
+    { organism: "" },
+    { organism: "" },
+  ]);
 
   const url = useSelector((items) => items?.url);
 
@@ -278,7 +286,7 @@ const Microbiology = () => {
         console.log("Response ", response);
         return;
       }
-    }else if (mainKey === "GramStain") {
+    } else if (mainKey === "GramStain") {
       if (key === "GramStain") {
         response = gramStain.map((items, indexOfItem) => {
           if (index === indexOfItem) {
@@ -306,6 +314,16 @@ const Microbiology = () => {
         return;
       }
     }
+  };
+
+  const updateOrg = (data, index) => {
+    let newData = organism?.map((items, indexOfOrg) => {
+      if (index === indexOfOrg) {
+        return { ...items, organism: data?.specimen ? data?.specimen : data };
+      }
+      return items;
+    });
+    setOrganism(newData);
   };
 
   return (
@@ -484,6 +502,7 @@ const Microbiology = () => {
               <div className="mt-2">
                 <ModalledInput
                   type={"Culture"}
+                  placeholder="Culture"
                   onClickAdd={() => addAndRemove("Add", index, "culture")}
                   onClickLess={() => addAndRemove("Less", index, "culture")}
                   onClickModal={(data) =>
@@ -522,12 +541,12 @@ const Microbiology = () => {
               <div className="mt-2">
                 <ModalledInput
                   type={"GramStain"}
+                  placeholder="GramStain"
                   onClickAdd={() => addAndRemove("Add", index, "GramStain")}
                   onClickLess={() => addAndRemove("Less", index, "GramStain")}
                   onClickModal={(data) =>
                     updateMicroscopy(data, index, "GramStain", "GramStain")
                   }
-
                   modalName={"Gram Stain"}
                   TextAreaValue={(items?.gramStain && items?.gramStain) || ""}
                   inputValue={(items?.result && items?.result) || ""}
@@ -535,7 +554,8 @@ const Microbiology = () => {
                     updateMicroscopy(
                       e.target.value.toUpperCase(),
                       index,
-                     "GramStain", "GramStain"
+                      "GramStain",
+                      "GramStain"
                     )
                   }
                   onChangeInput={(e) =>
@@ -543,12 +563,34 @@ const Microbiology = () => {
                       e.target.value.toUpperCase(),
                       index,
                       "result",
-                      "GramStain",
+                      "GramStain"
                     )
                   }
                 />
               </div>
             ))}
+        </div>
+
+        {/* Organism */}
+        <div className="md:col-span-2 bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
+          <CenterHeading title={"ORGANISM"} />
+          <div className="mt-2 grid grid-cols-2 gap-2">
+            {organism.map((items, index) => (
+              <ModalledInput
+                type={"Organism"}
+                inputShow={false}
+                modalName={"Select"}
+                placeholder={`Organism ${index + 1}`}
+                TextAreaValue={items?.organism}
+                onChangeTextArea={(event) => {
+                  updateOrg(event.target.value, index);
+                }}
+                onClickModal={(data) => {
+                  updateOrg(data, index);
+                }}
+              />
+            ))}
+          </div>
         </div>
 
         {/* Header */}

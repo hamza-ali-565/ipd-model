@@ -12,6 +12,8 @@ const ModalledInput = ({
   inputValue,
   type,
   modalName,
+  placeholder = "Microscopy",
+  inputShow = true,
 }) => {
   return (
     <div className="flex justify-around items-center">
@@ -21,7 +23,7 @@ const ModalledInput = ({
           name=""
           id=""
           value={TextAreaValue}
-          placeholder="Microscopy"
+          placeholder={placeholder}
           rows={3}
           cols={40}
           className="bg-transparent border-2 border-black rounded-lg p-1"
@@ -29,19 +31,21 @@ const ModalledInput = ({
         />
         <SpecimenModal title={modalName} onClick={onClickModal} type={type} />
       </div>
-      <div className="flex space-x-2">
-        <input
-          type="text"
-          placeholder="Result"
-          name=""
-          value={inputValue}
-          id=""
-          className="bg-transparent border-2 border-black rounded-lg p-2"
-          onChange={onChangeInput}
-        />
-        <ButtonDis title={"Add"} onClick={onClickAdd} />
-        <ButtonDis title={"Less"} onClick={onClickLess} />
-      </div>
+      {inputShow && (
+        <div className="flex space-x-2">
+          <input
+            type="text"
+            placeholder="Result"
+            name=""
+            value={inputValue}
+            id=""
+            className="bg-transparent border-2 border-black rounded-lg p-2"
+            onChange={onChangeInput}
+          />
+          <ButtonDis title={"Add"} onClick={onClickAdd} />
+          <ButtonDis title={"Less"} onClick={onClickLess} />
+        </div>
+      )}
     </div>
   );
 };
