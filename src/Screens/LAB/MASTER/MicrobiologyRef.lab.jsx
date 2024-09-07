@@ -10,7 +10,8 @@ import { ErrorAlert } from "../../../Components/Alert/Alert";
 const MicrobiologyRef = () => {
   const [microHeading, setMicroHeading] = useState(null);
   const [childData, setChildData] = useState([]);
-  const [ inpVal, setInpVal] = useState('')
+  const [open, setOpen] = useState(false);
+  const [inpVal, setInpVal] = useState("");
 
   const url = useSelector((state) => state?.url);
   const userData = useSelector((state) => state?.response);
@@ -23,19 +24,22 @@ const MicrobiologyRef = () => {
         `${url}/lab/labMicroDataChild?_id=${data?._id}`,
         { withCredentials: true }
       );
-      console.log("Response of getDetails ", response?.data?.data);
+      console.log(
+        "Response of getDetails ",
+        response?.data?.data?.data[0]?.childData
+      );
+      setChildData(response?.data?.data?.data[0]?.childData);
     } catch (error) {
       console.log("Error of get Details ", error);
     }
   };
 
   const updateArr = (value) => {
-
     // let newData = childData.map((items) => {
     //   return { ...items, name: value };
     // });
     // setChildData();
-    setInpVal(value)
+    setInpVal(value);
     setChildData((prevData) => [
       { name: value, createdUser: userData[0]?.userId },
     ]);
@@ -53,10 +57,15 @@ const MicrobiologyRef = () => {
         {
           parentName: microHeading?.parentName,
           childData,
+          _id: microHeading?._id,
         },
         { withCredentials: true }
       );
-      console.log("response of pushParameters", response?.data?.data);
+      setInpVal("");
+      console.log(
+        "response of pushParameters",
+        response?.data?.data?.data[0]?.childData
+      );
     } catch (error) {
       console.log("Error of pushParameters ", error);
     }
@@ -81,6 +90,28 @@ const MicrobiologyRef = () => {
         />
         <ButtonDis title={"Save"} onClick={pushParameters} />
       </div>
+
+      <div className="container mx-auto mt-3">
+        <div className="grid grid-cols-4 text-xs font-bold justify-items-center items-center h-12 border border-gray-300">
+          <p className="">S. No</p>
+          <p className="">Parameter Name</p>
+          <p className="">Created User</p>
+          <p className="">Update</p>
+        </div>
+      </div>
+      {childData.length > 0 &&
+        childData.map((items, index) => {
+          <div className="container mx-auto mt-3">
+            <div className="grid grid-cols-4 text-xs justify-items-center items-center h-8 border border-gray-300">
+              <p className="">{index + 1}</p>
+              <p className="">{items?.name}</p>
+              <p className="">{items?.createdUser}</p>
+              <p className="font-bold underline text-blue-500 hover:text-blue-600 cursor-pointer">
+                Update
+              </p>
+            </div>
+          </div>;
+        })}
     </div>
   );
 };
