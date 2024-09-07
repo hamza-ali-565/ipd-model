@@ -9,6 +9,7 @@ import { ErrorAlert } from "../../../Components/Alert/Alert";
 
 const MicrobiologyRef = () => {
   const [microHeading, setMicroHeading] = useState(null);
+  const [dataToUpdate, setDataToUpdate] = useState(null);
   const [childData, setChildData] = useState([]);
   const [open, setOpen] = useState(false);
   const [inpVal, setInpVal] = useState("");
@@ -39,7 +40,15 @@ const MicrobiologyRef = () => {
     //   return { ...items, name: value };
     // });
     // setChildData();
+
+    if (dataToUpdate !== null) {
+      setDataToUpdate({ ...dataToUpdate, name: value });
+      console.log(dataToUpdate);
+      return;
+    }
+
     setInpVal(value);
+
     setChildData((prevData) => [
       { name: value, createdUser: userData[0]?.userId },
     ]);
@@ -62,14 +71,30 @@ const MicrobiologyRef = () => {
         { withCredentials: true }
       );
       setInpVal("");
-      console.log(
-        "response of pushParameters",
-        response?.data?.data?.data[0]?.childData
-      );
+      getDetails(microHeading);
+      console.log("response of pushParameters", response?.data?.data?.data);
     } catch (error) {
       console.log("Error of pushParameters ", error);
     }
   };
+
+  const updateName = async () => {
+    try {
+      const response = await axios.put(
+        `${url}/lab/labMicNameUpdate`, // create this api on backend as well
+        {
+          _id: dataToUpdate?._id,
+          name: dataToUpdate?.name,
+        },
+        { withCredentials: true }
+      );
+      console.log("Error of updateName ", response.data);
+      getDetails(microHeading);
+    } catch (error) {
+      console.log("Error of updateName ", error);
+    }
+  };
+
   return (
     <div className="bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl">
       <CenterHeading title={"Microscopy Data Information"} />
@@ -86,9 +111,12 @@ const MicrobiologyRef = () => {
         <LabeledInput
           label={"Enter Parameter Name"}
           onChange={(e) => updateArr(e.target.value.toUpperCase())}
-          value={inpVal}
+          value={(dataToUpdate !== null && dataToUpdate?.name) || inpVal}
         />
-        <ButtonDis title={"Save"} onClick={pushParameters} />
+        <ButtonDis
+          title={dataToUpdate === null ? `Save` : "update"}
+          onClick={dataToUpdate === null ? updateName : pushParameters}
+        />
       </div>
 
       <div className="container mx-auto mt-3">
@@ -99,19 +127,22 @@ const MicrobiologyRef = () => {
           <p className="">Update</p>
         </div>
       </div>
-      {childData.length > 0 &&
-        childData.map((items, index) => {
+      {childData?.length > 0 &&
+        childData.map((items, index) => (
           <div className="container mx-auto mt-3">
             <div className="grid grid-cols-4 text-xs justify-items-center items-center h-8 border border-gray-300">
               <p className="">{index + 1}</p>
               <p className="">{items?.name}</p>
               <p className="">{items?.createdUser}</p>
-              <p className="font-bold underline text-blue-500 hover:text-blue-600 cursor-pointer">
+              <p
+                onClick={() => setDataToUpdate(items)}
+                className="font-bold underline text-blue-500 hover:text-blue-600 cursor-pointer"
+              >
                 Update
               </p>
             </div>
-          </div>;
-        })}
+          </div>
+        ))}
     </div>
   );
 };
