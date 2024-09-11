@@ -6,11 +6,13 @@ import axios from "axios";
 import LabeledInput from "../../../Components/LabelledInput/LabeledInput";
 import ButtonDis from "../../../Components/Button/ButtonDis";
 import { ErrorAlert } from "../../../Components/Alert/Alert";
+import Loader from "../../../Components/Modal/Loader";
 
 const MicrobiologyRef = () => {
   const [microHeading, setMicroHeading] = useState(null);
   const [dataToUpdate, setDataToUpdate] = useState(null);
   const [childData, setChildData] = useState([]);
+  const [childsData, setChildsData] = useState([]);
   const [open, setOpen] = useState(false);
   const [inpVal, setInpVal] = useState("");
 
@@ -19,6 +21,7 @@ const MicrobiologyRef = () => {
 
   const getDetails = async (data) => {
     try {
+      setOpen(true);
       console.log("data ", data);
       setMicroHeading(data);
       const response = await axios.get(
@@ -29,18 +32,16 @@ const MicrobiologyRef = () => {
         "Response of getDetails ",
         response?.data?.data?.data[0]?.childData
       );
-      setChildData(response?.data?.data?.data[0]?.childData);
+      setOpen(false);
+      setChildsData(response?.data?.data?.data[0]?.childData);
     } catch (error) {
+      setOpen(false);
+      setChildsData([]);
       console.log("Error of get Details ", error);
     }
   };
 
   const updateArr = (value) => {
-    // let newData = childData.map((items) => {
-    //   return { ...items, name: value };
-    // });
-    // setChildData();
-
     if (dataToUpdate !== null) {
       setDataToUpdate({ ...dataToUpdate, name: value });
       console.log(dataToUpdate);
@@ -61,6 +62,7 @@ const MicrobiologyRef = () => {
         return ErrorAlert({ text: "Please Select Heading !!!", timer: 2000 });
       if (childData.length <= 0)
         return ErrorAlert({ text: "Please Enter Paramster Name", timer: 2000 });
+      setOpen(true);
       const response = await axios.post(
         `${url}/lab/labMicroData`,
         {
@@ -73,13 +75,16 @@ const MicrobiologyRef = () => {
       setInpVal("");
       getDetails(microHeading);
       console.log("response of pushParameters", response?.data?.data?.data);
+      setOpen(false);
     } catch (error) {
       console.log("Error of pushParameters ", error);
+      setOpen(false);
     }
   };
 
   const updateName = async () => {
     try {
+      setOpen(true);
       const response = await axios.put(
         `${url}/lab/labMicNameUpdate`, // create this api on backend as well
         {
@@ -88,10 +93,13 @@ const MicrobiologyRef = () => {
         },
         { withCredentials: true }
       );
+      setOpen(false);
       console.log("Error of updateName ", response.data);
       getDetails(microHeading);
+      setDataToUpdate(null);
     } catch (error) {
       console.log("Error of updateName ", error);
+      setOpen(false);
     }
   };
 
@@ -115,7 +123,7 @@ const MicrobiologyRef = () => {
         />
         <ButtonDis
           title={dataToUpdate === null ? `Save` : "update"}
-          onClick={dataToUpdate === null ? updateName : pushParameters}
+          onClick={dataToUpdate === null ? pushParameters : updateName}
         />
       </div>
 
@@ -127,8 +135,8 @@ const MicrobiologyRef = () => {
           <p className="">Update</p>
         </div>
       </div>
-      {childData?.length > 0 &&
-        childData.map((items, index) => (
+      {childsData?.length > 0 &&
+        childsData.map((items, index) => (
           <div className="container mx-auto mt-3">
             <div className="grid grid-cols-4 text-xs justify-items-center items-center h-8 border border-gray-300">
               <p className="">{index + 1}</p>
@@ -143,6 +151,7 @@ const MicrobiologyRef = () => {
             </div>
           </div>
         ))}
+      <Loader onClick={open} title={"PLEASE WAIT ... "} />
     </div>
   );
 };

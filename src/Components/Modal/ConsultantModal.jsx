@@ -120,7 +120,7 @@ export default function ConsultantModal({ onClick, title, All = "" }) {
                     <p className="">{item?.name}</p>
                     <p className="">{item.speciality}</p>
                     <p className="">
-                      {item?.status === true ? "Active" : "De-Active"}
+                      {item?.status === true ? "Active" : "In-Active"}
                     </p>
                   </div>
                 </div>

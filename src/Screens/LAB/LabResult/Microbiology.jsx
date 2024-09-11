@@ -9,6 +9,8 @@ import moment from "moment/moment";
 import ButtonDis from "../../../Components/Button/ButtonDis";
 import SpecimenModal from "../../../Components/Modal/SpecimenModal";
 import ModalledInput from "../../../Components/ModalledInput/ModalledInput";
+import { useAsyncError } from "react-router-dom";
+import SimpleInput from "../../../Components/SimpleInput/SimpleInput";
 
 const Microbiology = () => {
   const [labNo, setLabNo] = useState("");
@@ -24,6 +26,7 @@ const Microbiology = () => {
   const [microscopy, setMicroscopy] = useState([{}]);
   const [culture, setCulture] = useState([{}]);
   const [gramStain, setGramStain] = useState([{}]);
+  const [microscopyData, setMicroscopyData] = useState([]);
   const [organism, setOrganism] = useState([
     { organism: "" },
     { organism: "" },
@@ -165,6 +168,35 @@ const Microbiology = () => {
       console.log("Error of submit result ", error);
       setOpen(false);
     }
+  };
+
+  // getAllMicroscopyData
+
+  const getAllMicroscopyData = () => {
+    const response = new Promise((resolve, reject) => {
+      let Data = axios.get(`${url}/lab/allDataWithChild`, {
+        withCredentials: true,
+      });
+
+      if (Data) {
+        return resolve(Data);
+      } else {
+        return reject(Data);
+      }
+    });
+
+    response
+      .then((value) => {
+        let updatedData = value?.data?.data?.data?.map((items) => ({
+          ...items,
+          showChild: false,
+        }));
+        setMicroscopyData(updatedData);
+        console.log(updatedData);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   // update specimen
@@ -324,6 +356,41 @@ const Microbiology = () => {
       return items;
     });
     setOrganism(newData);
+  };
+
+  const updateGettedArr = (id) => {
+    const newArr = microscopyData.map((items) => {
+      if (items._id === id) {
+        return {
+          ...items,
+          showChild: items?.showChild === true ? false : true,
+        };
+      }
+      return items;
+    });
+    console.log("new Arr ", newArr);
+
+    setMicroscopyData(newArr);
+  };
+
+  const UpdateInputs = (value, itemId, childIndex, key) => {
+    const newData = microscopyData?.map((items) => {
+      if (items?._id === itemId) {
+        const updatedData = items?.childData?.map((data, dataAt) => {
+          if (dataAt === childIndex) {
+            return {
+              ...data,
+              [key]: value,
+            };
+          }
+          return data;
+        });
+        return { ...items, childData: updatedData };
+      }
+      return items;
+    });
+    console.log("newData ", newData);
+    setMicroscopyData(newData);
   };
 
   return (
@@ -591,6 +658,71 @@ const Microbiology = () => {
               />
             ))}
           </div>
+        </div>
+
+        {/* Microscopy Data */}
+        <div className="md:col-span-2 bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl h-56 overflow-auto">
+          <CenterHeading title={"MICROSCOPY DATA"} />
+          <div className="flex justify-center my-4">
+            <ButtonDis title={"Load Data 🔃"} onClick={getAllMicroscopyData} />
+          </div>
+          {microscopyData.length > 0 &&
+            microscopyData.map((items, index) => (
+              <div key={index} className="mt-2 flex justify-center">
+                <div className="flex flex-col items-center">
+                  <ButtonDis
+                    title={`${items?.parentName}`}
+                    style={"bg-blue-600"}
+                    onClick={() => updateGettedArr(items?._id)}
+                  />
+                  {items?.childData.length > 0 &&
+                    items?.showChild === true &&
+                    items?.childData.map(
+                      (itemOfShowChild, indexOfShowChild) => (
+                        <div
+                          key={indexOfShowChild}
+                          className="grid grid-cols-4 gap-x-3 mt-2"
+                        >
+                          <p>{itemOfShowChild?.name}</p>
+                          <SimpleInput
+                            placeholder={"value 1"}
+                            onChange={(e) => {
+                              UpdateInputs(
+                                e.target?.value,
+                                items?._id,
+                                indexOfShowChild,
+                                "value1"
+                              );
+                            }}
+                          />
+                          <SimpleInput
+                            placeholder={"value 2"}
+                            onChange={(e) => {
+                              UpdateInputs(
+                                e.target?.value,
+                                items?._id,
+                                indexOfShowChild,
+                                "value2"
+                              );
+                            }}
+                          />
+                          <SimpleInput
+                            placeholder={"value 3"}
+                            onChange={(e) => {
+                              UpdateInputs(
+                                e.target?.value,
+                                items?._id,
+                                indexOfShowChild,
+                                "value3"
+                              );
+                            }}
+                          />
+                        </div>
+                      )
+                    )}
+                </div>
+              </div>
+            ))}
         </div>
 
         {/* Header */}
