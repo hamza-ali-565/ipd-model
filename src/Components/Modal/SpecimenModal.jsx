@@ -146,6 +146,10 @@ export default function SpecimenModal({ onClick, title, type }) {
                   ? "PICK GRAM STAIN"
                   : type === "Organism"
                   ? "PICK Organism"
+                  : type === "Remarks"
+                  ? "PICK REMARKS"
+                  : type === "Result"
+                  ? "PICK RESULT"
                   : ""}
               </p>
               <p
@@ -166,6 +170,10 @@ export default function SpecimenModal({ onClick, title, type }) {
                   ? "CREATE Gram Stain"
                   : type === "Organism"
                   ? "CREATE Organism"
+                  : type === "Remarks"
+                  ? "CREATE REMARKS"
+                  : type === "Result"
+                  ? "CREATE Result"
                   : ""}
               </p>
             </div>
@@ -191,6 +199,10 @@ export default function SpecimenModal({ onClick, title, type }) {
                         ? "Gram Stain Name"
                         : type === "Organism"
                         ? "Gram Organism"
+                        : type === "Remarks"
+                        ? "Remarks"
+                        : type === "Result"
+                        ? "Result"
                         : ""}
                     </p>
                   </div>
@@ -235,6 +247,10 @@ export default function SpecimenModal({ onClick, title, type }) {
                         ? "CREATE Gram Stain"
                         : type === "Organism"
                         ? "CREATE Organism"
+                        : type === "Remarks"
+                        ? "CREATE Remarks"
+                        : type === "Result"
+                        ? "CREATE Result"
                         : ""}
                     </p>
                   </div>

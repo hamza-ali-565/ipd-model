@@ -23,6 +23,8 @@ const Microbiology = () => {
   const [testName, setTestName] = useState("");
   const [specimen, setSpecimen] = useState(null);
   const [znStain, setZnStain] = useState(null);
+  const [remarks, setRemarks] = useState(null);
+  const [result, setResult] = useState(null);
   const [microscopy, setMicroscopy] = useState([{}]);
   const [culture, setCulture] = useState([{}]);
   const [gramStain, setGramStain] = useState([{}]);
@@ -356,6 +358,8 @@ const Microbiology = () => {
       return items;
     });
     setOrganism(newData);
+    console.log(organism);
+    
   };
 
   const updateGettedArr = (id) => {
@@ -391,6 +395,17 @@ const Microbiology = () => {
     });
     console.log("newData ", newData);
     setMicroscopyData(newData);
+  };
+
+  const updateRemarks = (value, key) => {
+    if (key === "remarks") {
+      setRemarks({ ...remarks, specimen: value });
+      console.log(remarks);
+      return;
+    } else {
+      setResult({ ...result, specimen: value });
+      console.log("result", result);
+    }
   };
 
   return (
@@ -742,6 +757,41 @@ const Microbiology = () => {
                 </div>
               </div>
             ))}
+        </div>
+
+        {/* Remarks and Result */}
+        <div className="md:col-span-2 bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl h-56 overflow-auto">
+          <CenterHeading title={"Remarks And Result"} />
+          <div className="flex flex-col items-center space-y-3">
+            <ModalledInput
+              type={"Remarks"}
+              inputShow={false}
+              modalName={"Select"}
+              placeholder={`Remarks`}
+              TextAreaValue={remarks?.specimen}
+              onChangeTextArea={(event) => {
+                updateRemarks(event.target.value, "remarks");
+              }}
+              onClickModal={(data) => {
+                setRemarks(data);
+                console.log(data);
+              }}
+            />
+            <ModalledInput
+              type={"Result"}
+              inputShow={false}
+              modalName={"Select"}
+              placeholder={`Result`}
+              TextAreaValue={result?.specimen}
+              onChangeTextArea={(event) => {
+                updateRemarks(event.target.value, "result");
+              }}
+              onClickModal={(data) => {
+                setResult(data);
+                console.log(data);
+              }}
+            />
+          </div>
         </div>
 
         {/* Header */}
