@@ -664,7 +664,11 @@ const Microbiology = () => {
         <div className="md:col-span-2 bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-30 shadow-lg my-4 mx-4  p-3 rounded-3xl h-56 overflow-auto">
           <CenterHeading title={"MICROSCOPY DATA"} />
           <div className="flex justify-center my-4">
-            <ButtonDis title={"Load Data 🔃"} onClick={getAllMicroscopyData} />
+            <ButtonDis
+              title={"Load Data 🔃"}
+              style={"bg-blue-500"}
+              onClick={getAllMicroscopyData}
+            />
           </div>
           {microscopyData.length > 0 &&
             microscopyData.map((items, index) => (
@@ -694,6 +698,11 @@ const Microbiology = () => {
                                 "value1"
                               );
                             }}
+                            value={
+                              (itemOfShowChild?.value1 &&
+                                itemOfShowChild?.value1) ||
+                              ""
+                            }
                           />
                           <SimpleInput
                             placeholder={"value 2"}
@@ -705,6 +714,11 @@ const Microbiology = () => {
                                 "value2"
                               );
                             }}
+                            value={
+                              (itemOfShowChild?.value2 &&
+                                itemOfShowChild?.value2) ||
+                              ""
+                            }
                           />
                           <SimpleInput
                             placeholder={"value 3"}
@@ -716,6 +730,11 @@ const Microbiology = () => {
                                 "value3"
                               );
                             }}
+                            value={
+                              (itemOfShowChild?.value3 &&
+                                itemOfShowChild?.value3) ||
+                              ""
+                            }
                           />
                         </div>
                       )
